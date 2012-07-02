@@ -12,11 +12,9 @@ CREATE TABLE IF NOT EXISTS `mzl_table_1` (
   `user` text NOT NULL,
   `hash` text NOT NULL,
   `seckey` text NOT NULL,
+  `mail` text NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
-INSERT INTO `mzl_table_1` (`id`, `user`, `hash`, `seckey`) VALUES
-(1, 'test123', '7288edd0fc3ffcbe93a0cf06e3568e28521687bc', '0');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

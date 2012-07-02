@@ -21,7 +21,7 @@ public class BuildGui extends JFrame {
     public static MCStart MineStart;
     public static Updater Update;
     private String RootDir = ru.zetrix.settings.Util.getWorkingDirectory().getAbsolutePath() + File.separator;
-    public JButton loginb = new JButton("Login", (new ImageIcon(ru.zetrix.settings.Util.getRes("lkey.png"))));
+    public static JButton loginb = new JButton("Login", (new ImageIcon(ru.zetrix.settings.Util.getRes("lkey.png"))));
     public JButton openNews = new JButton("News", (new ImageIcon(ru.zetrix.settings.Util.getRes("news.png"))));
     public JButton Options = new JButton("Options", (new ImageIcon(ru.zetrix.settings.Util.getRes("opt.png"))));
     public static JLabel UserText = new JLabel("User:");
@@ -34,14 +34,25 @@ public class BuildGui extends JFrame {
     
     public static JTabbedPane tabbedPane;
     public static Box MainBox;
+    public static Box RegBox;
     public static JPanel optpane;
     public static JPanel updpane;
+    
+    public static JLabel User = new JLabel("Login:");
+    public static JTextField Login = new JTextField(20);
+    public static JLabel Pass = new JLabel("Password:");
+    public static JPasswordField Passwd = new JPasswordField(20);
+    public static JLabel Mail = new JLabel("Email:");
+    public static JTextField MailF = new JTextField(20);
+    public JButton regb = new JButton("Register", (new ImageIcon(ru.zetrix.settings.Util.getRes("lkey.png"))));
 
     String[] modelem = new String[] {"Online", "Offline"};
     private JComboBox mode = new JComboBox(modelem);
 
     String[] memoryset = new String[] {"1GB", "2GB", "4GB", "8GB", "16GB"};
     private JComboBox memory = new JComboBox(memoryset);
+    
+    public JButton updb = new JButton("Update now", (new ImageIcon(ru.zetrix.settings.Util.getRes("news.png"))));
 
     public BuildGui() {
         setTitle(MZLOptions.LauncherTitle);
@@ -69,7 +80,7 @@ public class BuildGui extends JFrame {
         box2.add(Password);
         Box box3 = Box.createHorizontalBox();
         box3.add(Box.createHorizontalGlue());
-        box3.add(update);
+        //box3.add(update);
         box3.add(Box.createHorizontalStrut(12));
         box3.add(SaveData);
         box3.add(Box.createHorizontalStrut(10));
@@ -105,14 +116,58 @@ public class BuildGui extends JFrame {
         OutText.setEditable(false);
         JPanel updoutpane = new JPanel();
         updoutpane.add(OutText);
+        updoutpane.add(updb);
         updpane = new JPanel();
         updpane.add(updoutpane);
         tabbedPane.add("Update", updpane);
         
+        Box usbox = Box.createHorizontalBox();
+        usbox.add(User);
+        usbox.add(Box.createHorizontalStrut(5));
+        usbox.add(Login);
+        Box pasbox = Box.createHorizontalBox();
+        pasbox.add(Pass);
+        pasbox.add(Box.createHorizontalStrut(5));
+        pasbox.add(Passwd);
+        Box embox = Box.createHorizontalBox();
+        embox.add(Mail);
+        embox.add(Box.createHorizontalStrut(5));
+        embox.add(MailF);
+        Box acpbox = Box.createHorizontalBox();
+        acpbox.add(Box.createHorizontalGlue());
+        acpbox.add(Box.createHorizontalStrut(8));
+        acpbox.add(regb);
+        User.setPreferredSize(Pass.getPreferredSize());
+        Mail.setPreferredSize(Pass.getPreferredSize());
+        RegBox = Box.createVerticalBox();
+        RegBox.setBorder(new EmptyBorder(10,10,10,10));
+        RegBox.add(usbox);
+        RegBox.add(Box.createVerticalStrut(10));
+        RegBox.add(pasbox);
+        RegBox.add(Box.createVerticalStrut(10));
+        RegBox.add(embox);
+        RegBox.add(Box.createVerticalStrut(15));
+        RegBox.add(acpbox);
+        tabbedPane.add("Register", RegBox);
+        
         this.getContentPane().add(tabbedPane);
         
-        
         loginb.addActionListener(new ButtonEventListener());
+        this.regb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Auther.Register(Login.getText(), Passwd.getPassword(), MailF.getText());
+            }
+        });
+        this.updb.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updb.setEnabled(false);
+//                loginb.setEnabled(false);
+                Updater.Update();
+//                if (OutText.getText().trim().equals("All Done! Have a nice day!")) {
+//                    loginb.setEnabled(true);
+//                }
+            }
+        });
         this.openNews.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new ru.zetrix.gui.News().setVisible(true);
@@ -147,7 +202,8 @@ public class BuildGui extends JFrame {
                 client[2] = new File(RootDir + "bin" + File.separator + "jinput.jar");
                 client[3] = new File(RootDir + "bin" + File.separator + "lwjgl_util.jar");
 
-                if ((update.isSelected()) || (!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
+//                if ((update.isSelected()) || (!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
+                if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
                     print("One or more files not found. \n Starting Update!");
 //                    Update = new Updater();
 //                    Update.execute();

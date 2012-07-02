@@ -11,8 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import ru.zetrix.settings.Debug;
@@ -26,9 +24,10 @@ public class Updater {
             @Override
             public void run() {
                 try {
-                    BuildGui.tabbedPane.remove(1);                    
-                    BuildGui.OutText.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    BuildGui.tabbedPane.remove(0);
+                    //BuildGui.tabbedPane.remove(1);
+                    BuildGui.loginb.setEnabled(false);
+                    BuildGui.tabbedPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    //BuildGui.tabbedPane.remove(0);
                     BuildGui.OutText.setText("Connecting to Download Server...");
                     try {
                         Thread.sleep(300);
@@ -59,19 +58,20 @@ public class Updater {
                     } catch (InterruptedException exeption) {
                         print(exeption.toString());
                     }
-                    
+
                     byte[] b = new byte[1024];
                     int count = 0;
-                    
+
                     BuildGui.OutText.setText("Saving files to disc...");
                     while ((count=bis.read(b)) != -1) 
                         fw.write(b,0,count);
                     fw.close();
-              
+
                     BuildGui.OutText.setText("Unpacking client...");
                     unzip();
                     BuildGui.OutText.setText("All Done! Have a nice day!");
-                    BuildGui.OutText.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    BuildGui.tabbedPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    BuildGui.loginb.setEnabled(true);
                     
                 } catch (IOException ex) {
                     BuildGui.OutText.setText("Error: " + ex.toString());

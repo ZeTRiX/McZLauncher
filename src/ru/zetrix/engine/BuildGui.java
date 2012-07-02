@@ -171,12 +171,12 @@ public class BuildGui extends JFrame {
         this.getContentPane().add(tabbedPane);
         
         loginb.addActionListener(new ButtonEventListener());
-        this.regb.addActionListener(new ActionListener() {
+        regb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Auther.Register(Login.getText(), Passwd.getPassword(), MailF.getText());
             }
         });
-        this.updb.addActionListener(new ActionListener() {
+        updb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updb.setEnabled(false);
 //                loginb.setEnabled(false);
@@ -186,17 +186,17 @@ public class BuildGui extends JFrame {
 //                }
             }
         });
-        this.openNews.addActionListener(new ActionListener() {
+        openNews.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new ru.zetrix.gui.News().setVisible(true);
             }
         });
-        this.Options.addActionListener(new ActionListener() {
+        Options.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new ru.zetrix.gui.Options().setVisible(true);
             }
         });
-        this.SaveData.addActionListener(new ActionListener() {
+        SaveData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (SaveData.isSelected()) {
                     Util.setProperty("password", new String(BuildGui.Password.getPassword()));

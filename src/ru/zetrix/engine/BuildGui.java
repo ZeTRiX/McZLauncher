@@ -18,12 +18,16 @@
 
 package ru.zetrix.engine;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
+import ru.zetrix.gui.MZLaf;
 import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.MZLOptions;
 import ru.zetrix.settings.Util;
@@ -39,9 +43,9 @@ public class BuildGui extends JFrame {
     public static MCStart MineStart;
     public static Updater Update;
     private String RootDir = ru.zetrix.settings.Util.getWorkingDirectory().getAbsolutePath() + File.separator;
-    public static JButton loginb = new JButton("Login", (new ImageIcon(ru.zetrix.settings.Util.getRes("lkey.png"))));
+    public static JButton loginb = new JButton("Login", (new ImageIcon(ru.zetrix.settings.Util.getRes("login.png"))));
     public JButton openNews = new JButton("News", (new ImageIcon(ru.zetrix.settings.Util.getRes("news.png"))));
-    public JButton Options = new JButton("Options", (new ImageIcon(ru.zetrix.settings.Util.getRes("opt.png"))));
+    public JButton Options = new JButton("More Options", (new ImageIcon(ru.zetrix.settings.Util.getRes("opt.png"))));
     public static JLabel UserText = new JLabel("User:");
     public static JTextField UserName = new JTextField(20);
     public static JLabel PassText = new JLabel("Password:");
@@ -52,6 +56,8 @@ public class BuildGui extends JFrame {
     
     public static JTabbedPane tabbedPane;
     public static Box MainBox;
+    public static Box OptBox;
+    public static Box UpdBox;
     public static Box RegBox;
     public static JPanel optpane;
     public static JPanel updpane;
@@ -62,7 +68,7 @@ public class BuildGui extends JFrame {
     public static JPasswordField Passwd = new JPasswordField(20);
     public static JLabel Mail = new JLabel("Email:");
     public static JTextField MailF = new JTextField(20);
-    public JButton regb = new JButton("Register", (new ImageIcon(ru.zetrix.settings.Util.getRes("lkey.png"))));
+    public JButton regb = new JButton("Register", (new ImageIcon(ru.zetrix.settings.Util.getRes("reg.png"))));
 
     String[] modelem = new String[] {"Online", "Offline"};
     private JComboBox mode = new JComboBox(modelem);
@@ -70,11 +76,11 @@ public class BuildGui extends JFrame {
     String[] memoryset = new String[] {"1GB", "2GB", "4GB", "8GB", "16GB"};
     private JComboBox memory = new JComboBox(memoryset);
     
-    public JButton updb = new JButton("Update now", (new ImageIcon(ru.zetrix.settings.Util.getRes("news.png"))));
+    public JButton updb = new JButton("Update now", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
 
     public BuildGui() {
         setTitle(MZLOptions.LauncherTitle);
-        setIconImage(ru.zetrix.settings.Util.getRes("fav.png"));
+        setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
         setBackground(Color.BLACK);
         this.setBounds(200, 200, 460, 200);
         setResizable(false);
@@ -116,15 +122,19 @@ public class BuildGui extends JFrame {
         MainBox.add(box3);
         tabbedPane.add("Login", MainBox);
 
-        JPanel mempane = new JPanel();
-        mempane.add(memory);
-        JPanel npane = new JPanel();
-        npane.add(Options, BorderLayout.CENTER);
-        npane.add(openNews, BorderLayout.CENTER);
-        optpane = new JPanel();
-        optpane.add(mempane);
-        optpane.add(npane);
-        tabbedPane.add("Options", optpane);
+        Box opt1 = Box.createHorizontalBox();
+        opt1.add(memory);
+        Box opt2 = Box.createHorizontalBox();
+        opt2.add(Options);
+        opt2.add(Box.createHorizontalStrut(6));
+        opt2.add(openNews);
+        Options.setPreferredSize(openNews.getPreferredSize());
+        OptBox = Box.createVerticalBox();
+        OptBox.setBorder(new EmptyBorder(12,12,12,12));
+        OptBox.add(opt1);
+        OptBox.add(Box.createVerticalStrut(12));
+        OptBox.add(opt2);
+        tabbedPane.add("Options", OptBox);
         
         OutText = new JTextPane() {
             private static final long serialVersionUID = 1L;
@@ -132,12 +142,17 @@ public class BuildGui extends JFrame {
         OutText.setContentType("text/html");
         OutText.setText("<span style=\"font-size: 15pt\">Update Info Will Be Here</span>");
         OutText.setEditable(false);
-        JPanel updoutpane = new JPanel();
-        updoutpane.add(OutText);
-        updoutpane.add(updb);
-        updpane = new JPanel();
-        updpane.add(updoutpane);
-        tabbedPane.add("Update", updpane);
+        Box upd1 = Box.createHorizontalBox();
+        upd1.add(OutText);
+        Box upd2 = Box.createHorizontalBox();
+        upd2.add(updb);
+        upd2.add(Box.createHorizontalStrut(6));
+        UpdBox = Box.createVerticalBox();
+        UpdBox.setBorder(new EmptyBorder(12,12,42,12));
+        UpdBox.add(upd1);
+        UpdBox.add(Box.createVerticalStrut(12));
+        UpdBox.add(upd2);
+        tabbedPane.add("Update", UpdBox);
         
         Box usbox = Box.createHorizontalBox();
         usbox.add(User);
@@ -286,7 +301,7 @@ public class BuildGui extends JFrame {
   
 	public static void main(String[] args) {
                         try {
-//                            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//                            UIManager.setLookAndFeel(MZLaf.class.getCanonicalName());
                             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                                 if ("Nimbus".equals(info.getName())) {
                                     UIManager.setLookAndFeel(info.getClassName());

@@ -32,10 +32,10 @@ import javax.swing.JPanel;
  * @author ZeTRiX
  */
 public class Options extends JFrame {
-    private JLabel UpdateText = new JLabel("No Options, yet");
+    private JLabel UpdateText = new JLabel("Nothing goes here, yet");
     public Options() {
         super("Options");
-        setIconImage(ru.zetrix.settings.Util.getRes("fav.png"));
+        setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
         setBackground(Color.BLACK);
         this.setBounds(300, 300, 260, 140);
         setResizable(false);

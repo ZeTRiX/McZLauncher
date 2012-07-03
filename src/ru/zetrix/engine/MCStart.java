@@ -94,7 +94,7 @@ public class MCStart extends JFrame {
             if(MZLOptions.AllowFullscreen) {
                 setExtendedState(JFrame.MAXIMIZED_BOTH);
             }
-            setIconImage(ru.zetrix.settings.Util.getRes("fav.png"));
+            setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
             setMinimumSize(BuildGui.buildgui.getMinimumSize());
             setVisible(true);
             mcapplet.init();

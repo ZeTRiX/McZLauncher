@@ -41,7 +41,7 @@ public class News extends JFrame
   public News()
   {   
     add(NewsFrame(), "Center");
-    setIconImage(ru.zetrix.settings.Util.getRes("fav.png"));
+    setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
   }
 
   private static JScrollPane getUpdateNews()

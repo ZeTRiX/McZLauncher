@@ -100,7 +100,7 @@ public class Util {
         
         public static BufferedImage getRes(String resname) {
             try {
-                BufferedImage img = ImageIO.read(ru.zetrix.engine.BuildGui.class.getResource("/ru/zetrix/res/" + resname));
+                BufferedImage img = ImageIO.read(ru.zetrix.engine.BuildGui.class.getResource("/ru/zetrix/res/img/" + resname));
                 print("Loading resourse: " + resname);
                 return img;
             } catch (Exception e) {

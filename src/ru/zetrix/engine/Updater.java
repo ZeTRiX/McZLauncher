@@ -70,7 +70,7 @@ public class Updater {
                     while ((count=bis.read(b)) != -1) {
                         fw.write(b,0,count);
                         BuildGui.UpdBar.setValue((int) client.length());
-					BuildGui.UpdBar.setString("Downloading " + MZLOptions.zip_package + " ("
+					BuildGui.UpdBar.setString("Saving " + MZLOptions.zip_package + " ("
 							+ (int) client.length() + " bytes of " + cll_web
 							+ " bytes)");
                     }

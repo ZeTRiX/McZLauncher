@@ -18,10 +18,12 @@
 
 package ru.zetrix.engine;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 import ru.zetrix.settings.Debug;
+import ru.zetrix.settings.MZLOptions;
 import ru.zetrix.settings.ShieldUtil;
 import ru.zetrix.settings.Util;
 
@@ -31,46 +33,83 @@ import ru.zetrix.settings.Util;
  */
 public class Auther {
     private static InetAddress LHost;
-    public static void Authorize(final String user, final String pass) {
+    public static MCStart MineStart;
+    public static String[] clientinf;
+    public static File[] client = new File[4];
+    
+    public static boolean Authorize(final String user, final String pass) {
         try {
             LHost = InetAddress.getLocalHost();
         } catch (UnknownHostException ex) {
             print(ex.toString());
         }
-        new Thread() {
-            @Override
-            public void run() {
+//        new Thread() {
+//            @Override
+//            public void run() {
                 print("Processing client data...");
                 
-                String AuthorizeResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=auth" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + ru.zetrix.settings.ShieldUtil.MACAddr() + pass) + "&opt=" + ru.zetrix.settings.ShieldUtil.MACAddr() + "&localhost=" + LHost.toString());
-
+                String AuthorizeResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=auth" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&opt=" + ru.zetrix.settings.ShieldUtil.MACAddr() + "&localhost=" + LHost.toString());
+                print(AuthorizeResult);
+                
                 if (AuthorizeResult == null) {
                     //BuildGui.this.setAuthError("Error connecting to login server", allpanels);
-                    return;
+                    return false;
                 }
                 print("Local Host and Address: " + LHost.toString());
                 
                 if (AuthorizeResult.trim().equals("Bad Login")) {
                     //BuildGui.this.setAuthError("Username or password is incorrect", allpanels);
-                    return;
+                    return false;
+                } else if (AuthorizeResult.trim().equals("Fuck Off")) {
+                    BuildGui.WrongClient = true;
+                    return false;                
                 } else {
-                    BuildGui.AuthOk = true;
                     try {
                         print(AuthorizeResult);
                         BuildGui.hashes = AuthorizeResult.split("_")[0].split("<>");
-                        BuildGui.clientinf = AuthorizeResult.split("_")[1].split("<>");
+                        clientinf = AuthorizeResult.split("_")[1].split("<>");
                         
                         print("Auth OK. Starting 'check for download' process...");
                         Util.SleepTime(Long.valueOf(500L));
                         //BuildGui.runUpdater(md5s, userdata, mods, BuildGui.buildgui);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        //BuildGui.this.setAuthError(e.toString(), allpanels);
+                        //BuildGui.this.AuthError(e.toString(), allpanels);
+                    }
+                    if (checkUpdate() == true) {
+                    MineStart = new MCStart(user, clientinf[1].trim());
+                    return true;
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
+                                null,
+                                "Launcher will update your client now. \n Please, switch to Update tab. \n",
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE);
+                        Updater.Update();
+                        return false;
                     }
                 }
-            }
+//            }
+//        }
+//                .start();
+    }
+    
+    
+    public static boolean checkUpdate() {
+        print("Searching for client files...");
+        
+        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator +"minecraft.jar");
+        client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
+        client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
+        client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
+        
+        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
+            print("One or more files not found. \n Starting Update!");
+            return false;
+        } else {
+            print("Client files succesfully detected!");
+            return true;
         }
-                .start();
     }
     
     public static void Register(final String user, final char[] pass, final String mail) {
@@ -78,7 +117,7 @@ public class Auther {
             @Override
             public void run() {
                 print("Sending client data...");
-                String RegResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=reg" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + ru.zetrix.settings.ShieldUtil.MACAddr() + pass) + "&mail=" + mail + "&opt=" + ru.zetrix.settings.ShieldUtil.MACAddr());
+                String RegResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=reg" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&mail=" + mail + "&opt=" + ru.zetrix.settings.ShieldUtil.MACAddr());
                 print(RegResult);
                 
                 if (RegResult == null) {

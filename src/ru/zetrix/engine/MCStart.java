@@ -96,7 +96,7 @@ public class MCStart extends JFrame {
             }
             setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
             setMinimumSize(BuildGui.buildgui.getMinimumSize());
-            setVisible(true);
+            this.setVisible(true);
             mcapplet.init();
             mcapplet.start();
         } catch(Exception e) {

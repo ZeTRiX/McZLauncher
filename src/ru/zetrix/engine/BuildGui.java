@@ -37,13 +37,11 @@ import ru.zetrix.settings.Util;
  * @author ZeTRiX
  */
 public class BuildGui extends JFrame {
-    public static String[] clientinf;
     public static String[] hashes;
-    public static boolean AuthOk = false;
+    public static boolean WrongClient = false;
     public static BuildGui buildgui;
     public static MCStart MineStart;
     public static Updater Update;
-    private String RootDir = ru.zetrix.settings.Util.getWorkingDirectory().getAbsolutePath() + File.separator;
     public JButton loginb = new JButton("Login", (new ImageIcon(ru.zetrix.settings.Util.getRes("login.png"))));
     public JButton openNews = new JButton("News", (new ImageIcon(ru.zetrix.settings.Util.getRes("news.png"))));
     public JButton Options = new JButton("More Options", (new ImageIcon(ru.zetrix.settings.Util.getRes("opt.png"))));
@@ -241,11 +239,10 @@ public class BuildGui extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if (mode.getSelectedItem().equals("Online") && (UserName.getText().length() > 2) && (Password.getPassword().length > 1)) {
                 
-                Util.setProperty("login", BuildGui.UserName.getText());
-                Auther.Authorize(BuildGui.UserName.getText(), new String(BuildGui.Password.getPassword()));
-                checkUpdate();                
-                MineStart = new MCStart(UserName.getText(), clientinf[1].trim());
+                Util.setProperty("login", UserName.getText());
+                if (Auther.Authorize(UserName.getText(), new String(Password.getPassword())) == true) {
                 setVisible(false);
+                }
         
             } else if(UserName.getText().length() < 2) {
                 javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
@@ -256,10 +253,10 @@ public class BuildGui extends JFrame {
             } else {
                 print("Switching to offline mode...");
                 File[] client = new File[4];
-                client[0] = new File(RootDir + "bin" + File.separator + "minecraft.jar");
-                client[1] = new File(RootDir + "bin" + File.separator + "lwjgl.jar");
-                client[2] = new File(RootDir + "bin" + File.separator + "jinput.jar");
-                client[3] = new File(RootDir + "bin" + File.separator + "lwjgl_util.jar");
+                client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
+                client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
+                client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
+                client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
 
                 print("Searching for client files...");
                 if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
@@ -285,23 +282,6 @@ public class BuildGui extends JFrame {
         }                    
     }
 }
-    
-    public void checkUpdate() {
-        print("Searching for client files...");
-        
-        File[] client = new File[4];
-        client[0] = new File(RootDir + "bin" + File.separator +"minecraft.jar");
-        client[1] = new File(RootDir + "bin" + File.separator + "lwjgl.jar");
-        client[2] = new File(RootDir + "bin" + File.separator + "jinput.jar");
-        client[3] = new File(RootDir + "bin" + File.separator + "lwjgl_util.jar");
-        
-        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
-            print("One or more files not found. \n Starting Update!");
-            Updater.Update();
-        } else {
-            print("Client files succesfully detected!");
-        }
-    }
     
 	public static void main(String[] args) {
                         try {

@@ -38,5 +38,5 @@ public class MZLOptions {
     public static String GameFolder = "MZL";
     public static String UpdURL = "http://test.zetlog.ru/launchertest/";
     public static String zip_package = "mclient.zetrix";
-    public static String RootDir = ru.zetrix.settings.Util.getWorkPath(GameFolder).getAbsolutePath() + File.separator;
+    public static String RootDir = ru.zetrix.settings.Util.getWorkingDirectory().getAbsolutePath() + File.separator;
 }

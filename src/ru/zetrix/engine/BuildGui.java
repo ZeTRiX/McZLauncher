@@ -27,7 +27,8 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
-import ru.zetrix.gui.MZLaf;
+import ru.zetrix.settings.Base64;
+//import ru.zetrix.gui.MZLaf;
 import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.MZLOptions;
 import ru.zetrix.settings.Util;
@@ -43,7 +44,7 @@ public class BuildGui extends JFrame {
     public static MCStart MineStart;
     public static Updater Update;
     private String RootDir = ru.zetrix.settings.Util.getWorkingDirectory().getAbsolutePath() + File.separator;
-    public static JButton loginb = new JButton("Login", (new ImageIcon(ru.zetrix.settings.Util.getRes("login.png"))));
+    public JButton loginb = new JButton("Login", (new ImageIcon(ru.zetrix.settings.Util.getRes("login.png"))));
     public JButton openNews = new JButton("News", (new ImageIcon(ru.zetrix.settings.Util.getRes("news.png"))));
     public JButton Options = new JButton("More Options", (new ImageIcon(ru.zetrix.settings.Util.getRes("opt.png"))));
     public static JLabel UserText = new JLabel("User:");
@@ -53,6 +54,7 @@ public class BuildGui extends JFrame {
     public JCheckBox SaveData = new JCheckBox("Remember me", false);
     public JCheckBox update = new JCheckBox("Update", false);
     public static JTextPane OutText;
+    public static JProgressBar UpdBar;
     
     public static JTabbedPane tabbedPane;
     public static Box MainBox;
@@ -98,10 +100,14 @@ public class BuildGui extends JFrame {
         box1.add(UserText);
         box1.add(Box.createHorizontalStrut(6));
         box1.add(UserName);
+        if (Util.getPropertyString("login") != null)
+            UserName.setText(Util.getPropertyString("login"));
         Box box2 = Box.createHorizontalBox();
         box2.add(PassText);
         box2.add(Box.createHorizontalStrut(6));
         box2.add(Password);
+        if (Util.getPropertyString("password") != null)
+            Password.setText(new String(Base64.decode(Util.getPropertyString("password"))));
         Box box3 = Box.createHorizontalBox();
         box3.add(Box.createHorizontalGlue());
         //box3.add(update);
@@ -145,13 +151,22 @@ public class BuildGui extends JFrame {
         Box upd1 = Box.createHorizontalBox();
         upd1.add(OutText);
         Box upd2 = Box.createHorizontalBox();
-        upd2.add(updb);
-        upd2.add(Box.createHorizontalStrut(6));
+        UpdBar = new JProgressBar() {
+            private static final long serialVersionUID = 1L;
+        };
+        UpdBar.setString("Progress Will Apeear Here!");
+        upd2.add(UpdBar);
+        Box upd3 = Box.createHorizontalBox();
+        upd3.add(updb);
+        upd3.add(Box.createHorizontalStrut(6));
+        UpdBar.setPreferredSize(OutText.getPreferredSize());
         UpdBox = Box.createVerticalBox();
         UpdBox.setBorder(new EmptyBorder(12,12,42,12));
         UpdBox.add(upd1);
         UpdBox.add(Box.createVerticalStrut(12));
         UpdBox.add(upd2);
+        UpdBox.add(Box.createVerticalStrut(12));
+        UpdBox.add(upd3);
         tabbedPane.add("Update", UpdBox);
         
         Box usbox = Box.createHorizontalBox();
@@ -185,7 +200,7 @@ public class BuildGui extends JFrame {
         
         this.getContentPane().add(tabbedPane);
         
-        loginb.addActionListener(new ButtonEventListener());
+        loginb.addActionListener(new LoginListner());
         regb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Auther.Register(Login.getText(), Passwd.getPassword(), MailF.getText());
@@ -194,13 +209,15 @@ public class BuildGui extends JFrame {
         updb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updb.setEnabled(false);
+                UpdBar.setStringPainted(true);
+		UpdBar.setMinimum(0);
+		UpdBar.setMaximum(100);
+		UpdBar.setValue(0);
+//		UpdBar.setVisible(true);
 //                loginb.setEnabled(false);
                 Updater.Update();
-//                if (OutText.getText().trim().equals("All Done! Have a nice day!")) {
-//                    loginb.setEnabled(true);
-//                }
             }
-        });
+        });        
         openNews.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new ru.zetrix.gui.News().setVisible(true);
@@ -214,59 +231,29 @@ public class BuildGui extends JFrame {
         SaveData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (SaveData.isSelected()) {
-                    Util.setProperty("password", new String(BuildGui.Password.getPassword()));
+                    Util.setProperty("password", Base64.encode(new String (BuildGui.Password.getPassword())));
                 }
             }
         });
     }
     
-    class ButtonEventListener implements ActionListener {
+    class LoginListner implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (mode.getSelectedItem().equals("Online") && (UserName.getText().length() > 2) && (Password.getPassword().length > 1)) {
                 
                 Util.setProperty("login", BuildGui.UserName.getText());
                 Auther.Authorize(BuildGui.UserName.getText(), new String(BuildGui.Password.getPassword()));
-            
-//            if (AuthOk = true) {
-                print("Searching for client files...");
-                File[] client = new File[4];
-                client[0] = new File(RootDir + "bin" + File.separator +"minecraft.jar");
-                client[1] = new File(RootDir + "bin" + File.separator + "lwjgl.jar");
-                client[2] = new File(RootDir + "bin" + File.separator + "jinput.jar");
-                client[3] = new File(RootDir + "bin" + File.separator + "lwjgl_util.jar");
-
-//                if ((update.isSelected()) || (!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
-                if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
-                    print("One or more files not found. \n Starting Update!");
-//                    Update = new Updater();
-//                    Update.execute();
-                    Updater.Update();
-                    MineStart = new MCStart(UserName.getText(), clientinf[1].trim());
-                    setVisible(false);
-                } else {
-                    print("Client files succesfully detected!");
-                    MineStart = new MCStart(UserName.getText(), clientinf[1].trim());
-                    setVisible(false);
-                }
-                print("___");
-                print(hashes[0].trim());
-                print(hashes[1].trim());
-                print(clientinf[0].trim());
-                print(clientinf[1].trim());
-                print("___");
-
-                
-//            } else {
-//                AuthOk = false;
-//            }
+                checkUpdate();                
+                MineStart = new MCStart(UserName.getText(), clientinf[1].trim());
+                setVisible(false);
         
-        } else if(UserName.getText().length() < 2) {
-            javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
-                    null,
-                    "You forget to enter a username or it's not valid \n Please, next time, do not forget to enter a valid one. \n",
-                    "Warning",
-                    JOptionPane.WARNING_MESSAGE);
-        } else {
+            } else if(UserName.getText().length() < 2) {
+                javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
+                        null,
+                        "You forget to enter a username or it's not valid \n Please, next time, do not forget to enter a valid one. \n",
+                        "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
                 print("Switching to offline mode...");
                 File[] client = new File[4];
                 client[0] = new File(RootDir + "bin" + File.separator + "minecraft.jar");
@@ -298,7 +285,24 @@ public class BuildGui extends JFrame {
         }                    
     }
 }
-  
+    
+    public void checkUpdate() {
+        print("Searching for client files...");
+        
+        File[] client = new File[4];
+        client[0] = new File(RootDir + "bin" + File.separator +"minecraft.jar");
+        client[1] = new File(RootDir + "bin" + File.separator + "lwjgl.jar");
+        client[2] = new File(RootDir + "bin" + File.separator + "jinput.jar");
+        client[3] = new File(RootDir + "bin" + File.separator + "lwjgl_util.jar");
+        
+        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
+            print("One or more files not found. \n Starting Update!");
+            Updater.Update();
+        } else {
+            print("Client files succesfully detected!");
+        }
+    }
+    
 	public static void main(String[] args) {
                         try {
 //                            UIManager.setLookAndFeel(MZLaf.class.getCanonicalName());

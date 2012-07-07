@@ -22,9 +22,9 @@ import java.io.File;
 
 public class MZLOptions {
     public static String GameWindowTitle = "Minecraft - running on " + System.getProperty("os.name");
-    public static String LauncherTitle =  "McZLauncher (Coded by ZeTRiX)";
+    public static String LauncherTitle =  "MC Launcher (Coded by ZeTRiX)";
     
-    public static final String[] servers = {
+    public static final String[] servers = { 
         "Ensemplix - Sandbox, sv1.ensemplix.ru, 25565", 
         "Ensemplix - HiTech, sv2.ensemplix.ru, 25563", 
         "Ensemplix - Cogito, sv2.ensemplix.ru, 25565", 
@@ -36,7 +36,6 @@ public class MZLOptions {
     public static boolean AllowFullscreen = true;
     
     public static String GameFolder = "MZL";
-    public static String UpdURL = "http://test.zetlog.ru/launchertest/";
-    public static String zip_package = "mclient.zetrix";
+    public static String zip_package = "mclient.zip";
     public static String RootDir = ru.zetrix.settings.Util.getWorkPath(GameFolder).getAbsolutePath() + File.separator;
 }

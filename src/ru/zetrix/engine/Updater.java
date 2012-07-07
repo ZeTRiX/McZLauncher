@@ -19,12 +19,7 @@
 package ru.zetrix.engine;
 
 import java.awt.Cursor;
-import java.io.BufferedInputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
@@ -32,64 +27,60 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import ru.zetrix.settings.Debug;
+import ru.zetrix.settings.MZLOptions;
 
 public class Updater {
-    private static String zip_package = "mclient.zip";
     public static final boolean debug = true;
-    private static String RootDir = ru.zetrix.settings.Util.getWorkPath("MZL").getAbsolutePath() + File.separator;
     public static void Update() {
         new Thread() {
             @Override
             public void run() {
                 try {
                     //BuildGui.tabbedPane.remove(1);
-                    BuildGui.loginb.setEnabled(false);
                     BuildGui.tabbedPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    //BuildGui.tabbedPane.remove(0);
-                    BuildGui.OutText.setText("Connecting to Download Server...");
+                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Connecting to Download Server...</span>");
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException exeption) {
-                        print(exeption.toString());
+                        BuildGui.OutText.setText(exeption.toString());
                     }
                     
-                    URL url = new URL("http://test.zetlog.ru/launchertest/" + zip_package);
-                    BuildGui.OutText.setText("Recieving a list of files...");
+                    URL url = new URL(MZLOptions.UpdURL + MZLOptions.zip_package);
+                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Recieving a list of files...</span>");
           
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    HttpURLConnection updconn = (HttpURLConnection) url.openConnection();
+                    File client = new File(MZLOptions.RootDir, MZLOptions.zip_package);
+                    long cll_web = updconn.getContentLength();
                     
-                    BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
+                    BuildGui.UpdBar.setMaximum((int) cll_web);
+                    if (client.length() != cll_web && cll_web > 1) {}
                     
-                    BuildGui.OutText.setText("Testing paths...");
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException exeption) {
-                        print(exeption.toString());
-                    }
+                    BufferedInputStream bis = new BufferedInputStream(updconn.getInputStream());
                     
-                    File f1 = new File(RootDir, zip_package);
-                    FileOutputStream fw = new FileOutputStream(f1);
+                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Testing paths...</span>");
                     
-                    BuildGui.OutText.setText("Loading selected files...");
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException exeption) {
-                        print(exeption.toString());
-                    }
+                    FileOutputStream fw = new FileOutputStream(client);
+                    
+                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Loading selected files...</span>");
 
                     byte[] b = new byte[1024];
                     int count = 0;
 
-                    BuildGui.OutText.setText("Saving files to disc...");
-                    while ((count=bis.read(b)) != -1) 
+                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Saving client files to disc...</span>");
+                    while ((count=bis.read(b)) != -1) {
                         fw.write(b,0,count);
+                        BuildGui.UpdBar.setValue((int) client.length());
+					BuildGui.UpdBar.setString("Downloading " + MZLOptions.zip_package + " ("
+							+ (int) client.length() + " bytes of " + cll_web
+							+ " bytes)");
+                    }
                     fw.close();
 
-                    BuildGui.OutText.setText("Unpacking client...");
+                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Unpacking client...</span>");
                     unzip();
-                    BuildGui.OutText.setText("All Done! Have a nice day!");
+                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">All Done! Have a nice day!</span>");
+                    BuildGui.UpdBar.setString("Done!");
                     BuildGui.tabbedPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    BuildGui.loginb.setEnabled(true);
                     
                 } catch (IOException ex) {
                     BuildGui.OutText.setText("Error: " + ex.toString());
@@ -100,8 +91,8 @@ public class Updater {
     }
   
     protected static void unzip() {
-        String path = ru.zetrix.settings.Util.getWorkPath("MZL").getAbsolutePath() + File.separator;
-        String ZFilePath = path + "mclient.zip";
+        String path = MZLOptions.RootDir;
+        String ZFilePath = path + MZLOptions.zip_package;
         String ExPath = path;
 
         Vector zipEntries = new Vector();

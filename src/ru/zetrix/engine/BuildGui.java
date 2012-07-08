@@ -50,9 +50,6 @@ public class BuildGui extends JFrame {
     public static JLabel PassText = new JLabel("Password:");
     public static JPasswordField Password = new JPasswordField(20);
     public JCheckBox SaveData = new JCheckBox("Remember me", false);
-    public JCheckBox update = new JCheckBox("Update", false);
-    public static JTextPane OutText;
-    public static JProgressBar UpdBar;
     
     public static JTabbedPane tabbedPane;
     public static Box MainBox;
@@ -73,8 +70,10 @@ public class BuildGui extends JFrame {
     String[] modelem = new String[] {"Online", "Offline"};
     private JComboBox mode = new JComboBox(modelem);
 
-    String[] memoryset = new String[] {"1GB", "2GB", "4GB", "8GB", "16GB"};
+    public static JLabel MemText = new JLabel("Memory:");
+    String[] memoryset = new String[] {"1024", "2048", "4096", "8192", "16384"};
     private JComboBox memory = new JComboBox(memoryset);
+    public static JLabel MemType = new JLabel(" MB");
     
     public JButton updb = new JButton("Update now", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
 
@@ -127,45 +126,24 @@ public class BuildGui extends JFrame {
         tabbedPane.add("Login", MainBox);
 
         Box opt1 = Box.createHorizontalBox();
+        opt1.add(MemText);
+        opt1.add(Box.createHorizontalStrut(16));
         opt1.add(memory);
+        opt1.add(Box.createHorizontalStrut(16));
+        opt1.add(MemType);
         Box opt2 = Box.createHorizontalBox();
         opt2.add(Options);
         opt2.add(Box.createHorizontalStrut(6));
         opt2.add(openNews);
+        opt2.add(Box.createHorizontalStrut(6));
+        opt2.add(updb);
         Options.setPreferredSize(openNews.getPreferredSize());
         OptBox = Box.createVerticalBox();
         OptBox.setBorder(new EmptyBorder(12,12,12,12));
         OptBox.add(opt1);
         OptBox.add(Box.createVerticalStrut(12));
         OptBox.add(opt2);
-        tabbedPane.add("Options", OptBox);
-        
-        OutText = new JTextPane() {
-            private static final long serialVersionUID = 1L;
-        };
-        OutText.setContentType("text/html");
-        OutText.setText("<span style=\"font-size: 15pt\">Update Info Will Be Here</span>");
-        OutText.setEditable(false);
-        Box upd1 = Box.createHorizontalBox();
-        upd1.add(OutText);
-        Box upd2 = Box.createHorizontalBox();
-        UpdBar = new JProgressBar() {
-            private static final long serialVersionUID = 1L;
-        };
-        UpdBar.setString("Progress Will Apeear Here!");
-        upd2.add(UpdBar);
-        Box upd3 = Box.createHorizontalBox();
-        upd3.add(updb);
-        upd3.add(Box.createHorizontalStrut(6));
-        UpdBar.setPreferredSize(OutText.getPreferredSize());
-        UpdBox = Box.createVerticalBox();
-        UpdBox.setBorder(new EmptyBorder(12,12,42,12));
-        UpdBox.add(upd1);
-        UpdBox.add(Box.createVerticalStrut(12));
-        UpdBox.add(upd2);
-        UpdBox.add(Box.createVerticalStrut(12));
-        UpdBox.add(upd3);
-        tabbedPane.add("Update", UpdBox);
+        tabbedPane.add("Options & Update", OptBox);
         
         Box usbox = Box.createHorizontalBox();
         usbox.add(User);
@@ -207,13 +185,12 @@ public class BuildGui extends JFrame {
         updb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updb.setEnabled(false);
-                UpdBar.setStringPainted(true);
-		UpdBar.setMinimum(0);
-		UpdBar.setMaximum(100);
-		UpdBar.setValue(0);
 //		UpdBar.setVisible(true);
 //                loginb.setEnabled(false);
-                Updater.Update();
+                
+                Update = new Updater();
+                Update.show();
+//                Updater.Update();
             }
         });        
         openNews.addActionListener(new ActionListener() {
@@ -237,7 +214,7 @@ public class BuildGui extends JFrame {
     
     class LoginListner implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if (mode.getSelectedItem().equals("Online") && (UserName.getText().length() > 2) && (Password.getPassword().length > 1)) {
+            if (mode.getSelectedItem().equals("Online") && (UserName.getText().length() > 1) && (Password.getPassword().length > 1)) {
                 
                 Util.setProperty("login", UserName.getText());
                 if (Auther.Authorize(UserName.getText(), new String(Password.getPassword())) == true) {
@@ -252,36 +229,19 @@ public class BuildGui extends JFrame {
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 print("Switching to offline mode...");
-                File[] client = new File[4];
-                client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
-                client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
-                client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
-                client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
-
-                print("Searching for client files...");
-                if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
-                    print("One or more files nor found. \n Nothing can be done in Offline Mode!");
-                    
+                
+                if (Auther.OfflineCheck() == true) {
+                    MineStart = new MCStart(UserName.getText(), "");  
+                    setVisible(false);
+                } else {
                     JOptionPane.showMessageDialog(null,
                             "One or more game files nor found! \n Can't do anything, case of offline mode. \n You must be in Online mode to download client files.",
                             "Offline mode Error",
                             JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    print("Client files succesfully detected!");
-                    print("Running game in offline mode!");
-                    
-                    MineStart = new MCStart(UserName.getText(), "");
-                    setVisible(false);
                 }
-                
-//            javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
-//                    null,
-//                    "No games avaliable in offline mode \n Close this window, nigga! \n Understand me? \n",
-//                    "Warning",
-//                    JOptionPane.INFORMATION_MESSAGE);
-        }                    
+            }
+        }
     }
-}
     
 	public static void main(String[] args) {
                         try {

@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import ru.zetrix.settings.MZLOptions;
 
 /**
  *
@@ -34,7 +35,7 @@ import javax.swing.JPanel;
 public class Options extends JFrame {
     private JLabel UpdateText = new JLabel("Nothing goes here, yet");
     public Options() {
-        super("Options");
+        super(MZLOptions.OptName);
         setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
         setBackground(Color.BLACK);
         this.setBounds(300, 300, 260, 140);

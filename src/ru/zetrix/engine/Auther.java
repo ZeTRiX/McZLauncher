@@ -36,6 +36,7 @@ public class Auther {
     public static MCStart MineStart;
     public static String[] clientinf;
     public static File[] client = new File[4];
+    public static Updater Update;
     
     public static boolean Authorize(final String user, final String pass) {
         try {
@@ -80,12 +81,8 @@ public class Auther {
                     MineStart = new MCStart(user, clientinf[1].trim());
                     return true;
                     } else {
-                        javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
-                                null,
-                                "Launcher will update your client now. \n Please, switch to Update tab. \n",
-                                "Warning",
-                                JOptionPane.WARNING_MESSAGE);
-                        Updater.Update();
+                        Update = new Updater();
+                        Update.show();
                         return false;
                     }
                 }
@@ -108,6 +105,23 @@ public class Auther {
             return false;
         } else {
             print("Client files succesfully detected!");
+            return true;
+        }
+    }
+    
+    public static boolean OfflineCheck() {
+        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
+        client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
+        client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
+        client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
+
+        print("Searching for client files...");
+        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
+            print("One or more files nor found. \n Nothing can be done in Offline Mode!");
+            return false;
+        } else {
+            print("Client files succesfully detected!");
+            print("Running game in offline mode!");
             return true;
         }
     }

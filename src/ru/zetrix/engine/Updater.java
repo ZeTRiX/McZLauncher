@@ -18,7 +18,10 @@
 
 package ru.zetrix.engine;
 
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -26,64 +29,119 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.MZLOptions;
 
-public class Updater {
+public class Updater extends JFrame {
     public static final boolean debug = true;
+    public static JPanel UpdPane;
+    public static JTextPane OutText;
+    public static JProgressBar UpdBar;
+    public static Box UpdBox;
+    
+    public static JButton CancelUpd = new JButton("Cancel Update", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
+    
+    public Updater() {
+        super(MZLOptions.UpdWinName);
+        setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
+        setBackground(Color.BLACK);
+        this.setBounds(200, 200, 460, 220);
+        setResizable(true);
+        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        
+        final ImageIcon icon = new ImageIcon(BuildGui.class.getResource("/ru/zetrix/res/bg.png"));
+        UpdPane = new JPanel() {
+            protected void paintComponent(Graphics g) {
+                g.drawImage(icon.getImage(), 0,0, null);
+                super.paintComponent(g);
+            }
+        };
+        OutText = new JTextPane();
+        OutText.setContentType("text/html");
+        OutText.setText("<span style=\"font-size: 15pt\">Update Info Will Be Here</span>");
+        OutText.setEditable(false);
+        Box upd1 = Box.createHorizontalBox();
+        upd1.add(OutText);
+        Box upd2 = Box.createHorizontalBox();
+        UpdBar = new JProgressBar();
+        UpdBar.setStringPainted(true);
+        UpdBar.setString("Progress Will Apeear Here!");
+        UpdBar.setMinimum(0);
+        UpdBar.setMaximum(100);
+        UpdBar.setValue(0);
+        upd2.add(UpdBar);
+        Box upd3 = Box.createHorizontalBox();
+        upd3.add(CancelUpd);
+        upd3.add(Box.createHorizontalStrut(6));
+        UpdBar.setPreferredSize(OutText.getPreferredSize());
+        UpdBox = Box.createVerticalBox();
+        UpdBox.setBorder(new EmptyBorder(12,12,42,12));
+        UpdBox.add(upd1);
+        UpdBox.add(Box.createVerticalStrut(12));
+        UpdBox.add(upd2);
+        UpdBox.add(Box.createVerticalStrut(12));
+        UpdBox.add(upd3);
+        UpdPane.add("Update", UpdBox);
+        
+        this.getContentPane().add(UpdPane);
+        Update();
+    }
+    
     public static void Update() {
         new Thread() {
             @Override
             public void run() {
                 try {
                     //BuildGui.tabbedPane.remove(1);
-                    BuildGui.tabbedPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Connecting to Download Server...</span>");
+                    UpdPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    OutText.setText("<span style=\"font-size: 15pt\">Connecting to Download Server...</span>");
                     try {
                         Thread.sleep(300);
                     } catch (InterruptedException exeption) {
-                        BuildGui.OutText.setText(exeption.toString());
+                        OutText.setText(exeption.toString());
                     }
                     
                     URL url = new URL(MZLOptions.UpdURL + MZLOptions.zip_package);
-                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Recieving a list of files...</span>");
+                    OutText.setText("<span style=\"font-size: 15pt\">Recieving a list of files...</span>");
           
                     HttpURLConnection updconn = (HttpURLConnection) url.openConnection();
                     File client = new File(MZLOptions.RootDir, MZLOptions.zip_package);
                     long cll_web = updconn.getContentLength();
                     
-                    BuildGui.UpdBar.setMaximum((int) cll_web);
+                    UpdBar.setMaximum((int) cll_web);
                     if (client.length() != cll_web && cll_web > 1) {}
                     
                     BufferedInputStream bis = new BufferedInputStream(updconn.getInputStream());
                     
-                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Testing paths...</span>");
+                    OutText.setText("<span style=\"font-size: 15pt\">Testing paths...</span>");
                     
                     FileOutputStream fw = new FileOutputStream(client);
                     
-                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Loading selected files...</span>");
+                    OutText.setText("<span style=\"font-size: 15pt\">Loading selected files...</span>");
 
                     byte[] b = new byte[1024];
                     int count = 0;
 
-                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Saving client files to disc...</span>");
+                    OutText.setText("<span style=\"font-size: 15pt\">Saving client files to disc...</span>");
                     while ((count=bis.read(b)) != -1) {
                         fw.write(b,0,count);
-                        BuildGui.UpdBar.setValue((int) client.length());
-					BuildGui.UpdBar.setString("Saving " + MZLOptions.zip_package + " ("
+                        UpdBar.setValue((int) client.length());
+					UpdBar.setString("Saving " + MZLOptions.zip_package + " ("
 							+ (int) client.length() + " bytes of " + cll_web
 							+ " bytes)");
                     }
                     fw.close();
 
-                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">Unpacking client...</span>");
+                    OutText.setText("<span style=\"font-size: 15pt\">Unpacking client...</span>");
                     unzip();
-                    BuildGui.OutText.setText("<span style=\"font-size: 15pt\">All Done! Have a nice day!</span>");
-                    BuildGui.UpdBar.setString("Done!");
-                    BuildGui.tabbedPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    
+                    OutText.setText("<span style=\"font-size: 15pt\">All Done! Have a nice day!</span>");
+                    UpdBar.setString("Done!");
+                    UpdPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    CancelUpd.setEnabled(false);
                 } catch (IOException ex) {
-                    BuildGui.OutText.setText("Error: " + ex.toString());
+                    OutText.setText("Error: " + ex.toString());
                 }
             }
         }

@@ -28,32 +28,30 @@ import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import ru.zetrix.settings.Debug;
+import ru.zetrix.settings.MZLOptions;
 
 /**
  * @author ZeTRiX
  */
 
-public class News extends JFrame
-{
-  private static String newsurl = "http://mcupdate.tumblr.com/";
+public class News extends JFrame {
   private static JScrollPane scrollPane;
   
-  public News()
-  {   
+  public News() {   
     add(NewsFrame(), "Center");
     setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
   }
 
-  private static JScrollPane getUpdateNews()
-  {
+  private static JScrollPane getUpdateNews() {
     if (scrollPane != null) return scrollPane;
     try
     {
       final JTextPane editorPane = new JTextPane()
       {
         private static final long serialVersionUID = 1L;
-      };
-      editorPane.setText("<html><b>Loading news page...</b></html>");
+      };      
+      editorPane.setContentType("text/html");
+      editorPane.setText("<span style=\"font-size: 20pt\"><b>Loading news page...</b></span>");
       editorPane.addHyperlinkListener(new HyperlinkListener() {
         public void hyperlinkUpdate(HyperlinkEvent he) {
           if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
@@ -67,10 +65,10 @@ public class News extends JFrame
       new Thread() {
         public void run() {
           try {
-    		  editorPane.setPage(new URL(newsurl));
+    		  editorPane.setPage(new URL(MZLOptions.NewsURL));
           } catch (Exception e) {
             e.printStackTrace();
-            editorPane.setText("<html><b>Error connecting to news server</b></html>");
+            editorPane.setText("<span style=\"font-size: 20pt\"><b>Error connecting to news server</b></span>");
           }
         }
       }
@@ -88,7 +86,7 @@ public class News extends JFrame
   }
 
   static JFrame NewsFrame() {
-    JFrame NewsFr = new JFrame("Новости");
+    JFrame NewsFr = new JFrame(MZLOptions.NewsName);
     NewsFr.setPreferredSize(new Dimension(1000,600));
     NewsFr.pack();
     NewsFr.setLocationRelativeTo(null);
@@ -105,7 +103,7 @@ public class News extends JFrame
   
     public static void openLink(URI uri) {
         try {
-            print("Getting news page from " + newsurl);
+            print("Getting news page from " + MZLOptions.NewsURL);
             Object o = Class.forName("java.awt.Desktop").getMethod("getDesktop", new Class[0]).invoke(null, new Object[0]);
             o.getClass().getMethod("browse", new Class[] { URI.class }).invoke(o, new Object[] { uri });
         } catch (Throwable e) {

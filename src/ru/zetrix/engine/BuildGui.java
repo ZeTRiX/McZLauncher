@@ -37,7 +37,6 @@ import ru.zetrix.settings.Util;
  * @author ZeTRiX
  */
 public class BuildGui extends JFrame {
-    public static String[] hashes;
     public static boolean WrongClient = false;
     public static BuildGui buildgui;
     public static MCStart MineStart;
@@ -219,6 +218,12 @@ public class BuildGui extends JFrame {
                 Util.setProperty("login", UserName.getText());
                 if (Auther.Authorize(UserName.getText(), new String(Password.getPassword())) == true) {
                 setVisible(false);
+                } else if (WrongClient == true) {
+                    javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
+                            null,
+                            "Version of your launcher is not valid. \n Please, visit the server site to get a new one! \n",
+                            "Warning",
+                            JOptionPane.WARNING_MESSAGE);
                 }
         
             } else if(UserName.getText().length() < 2) {

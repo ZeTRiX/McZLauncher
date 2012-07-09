@@ -27,7 +27,7 @@ import java.io.IOException;
  * @author ZeTRiX
  */
 public class Debug {
-    public static final boolean debug = true; //Вывод действий лаунчера в консоль
+    public static final boolean debug = true; //Debug-режим(Режим отладки) для лаунчера - добавляет соотв. параметр к запуску.
     public static final boolean splashlogo = false; //Иконка перед загрузкой лаунчера. Без пре-лого лаунчер грузится быстрее!
         
     public static void Logger(String text) {

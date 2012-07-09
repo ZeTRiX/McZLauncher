@@ -35,6 +35,7 @@ public class Auther {
     private static InetAddress LHost;
     public static MCStart MineStart;
     public static String[] clientinf;
+    public static String[] hashes;
     public static File[] client = new File[4];
     public static Updater Update;
     
@@ -67,7 +68,7 @@ public class Auther {
                 } else {
                     try {
                         print(AuthorizeResult);
-                        BuildGui.hashes = AuthorizeResult.split("_")[0].split("<>");
+                        hashes = AuthorizeResult.split("_")[0].split("<>");
                         clientinf = AuthorizeResult.split("_")[1].split("<>");
                         
                         print("Auth OK. Starting 'check for download' process...");
@@ -91,11 +92,10 @@ public class Auther {
 //                .start();
     }
     
-    
     public static boolean checkUpdate() {
         print("Searching for client files...");
         
-        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator +"minecraft.jar");
+        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
         client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
         client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
         client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
@@ -104,8 +104,13 @@ public class Auther {
             print("One or more files not found. \n Starting Update!");
             return false;
         } else {
-            print("Client files succesfully detected!");
-            return true;
+            print("Client files succesfully detected! \n Checking client hash!");
+            print(ShieldUtil.FileHash(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar"));
+            if (hashes[1].equals(ShieldUtil.FileHash(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar"))) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
     

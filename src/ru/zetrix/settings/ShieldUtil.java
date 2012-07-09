@@ -18,9 +18,13 @@
 
 package ru.zetrix.settings;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
@@ -69,4 +73,26 @@ public class ShieldUtil {
         }
         return formatter.toString();
     }
+    
+    public static String FileHash(String FilePath) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA1");
+
+			FileInputStream fis = new FileInputStream(FilePath);
+			DigestInputStream dis = new DigestInputStream(fis, md);
+			BufferedInputStream bis = new BufferedInputStream(dis);
+
+			while (true) {
+				int b = bis.read();
+				if (b == -1)
+					break;
+			}
+ 
+			BigInteger bi = new BigInteger(md.digest());
+			return(bi.toString(16));
+ 
+		} catch (Exception e) {
+			return(e.getMessage());
+		}
+	}
 }

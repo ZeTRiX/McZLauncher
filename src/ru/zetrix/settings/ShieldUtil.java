@@ -24,6 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -46,23 +48,31 @@ public class ShieldUtil {
         return sha1;
     }
     
-    public static String MACAddr() {
-        try {
-            NetworkInterface ni = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
-            if (ni != null) {
-                StringBuilder sb = new StringBuilder();
-                Formatter formatter = new Formatter(sb, Locale.US);
-                byte[] mac = ni.getHardwareAddress();
-                if (mac != null)
-                    for (int i = 0; i < mac.length; i++) {
-                        formatter.format("%02X%s", new Object[] { Byte.valueOf(mac[i]), i < mac.length - 1 ? "-" : "" });
-                        if (formatter.toString().equals("")) return "Fail";
-                    }
-                return formatter.toString();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static String GetMAC() {
+    	InetAddress ip;
+	try {
+		ip = InetAddress.getLocalHost();
+		print("Current IP address: " + ip.getHostAddress());
+ 
+		NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+		byte[] mac = network.getHardwareAddress();
+ 
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < mac.length; i++) {
+			sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                        if (sb.toString().equals("")) {
+                            print("Current MAC address cannot be identified!");                            
+                            return "Fail";
+                        }
+		}
+		print("Current MAC address: " + sb.toString());
+		return sb.toString();
+ 
+	} catch (UnknownHostException e) {
+		e.printStackTrace();
+	} catch (SocketException e){
+		e.printStackTrace();
+	}
         return "Fail";
     }
     
@@ -95,4 +105,8 @@ public class ShieldUtil {
 			return(e.getMessage());
 		}
 	}
+    
+    private static void print(String str) {
+        Debug.Logger(str);
+    }
 }

@@ -50,7 +50,7 @@ public class Auther {
 //            public void run() {
                 print("Processing client data...");
                 
-                String AuthorizeResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=auth" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&opt=" + ru.zetrix.settings.ShieldUtil.MACAddr() + "&localhost=" + LHost.toString());
+                String AuthorizeResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=auth" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC() + "&localhost=" + LHost.toString());
                 print(AuthorizeResult);
                 
                 if (AuthorizeResult == null) {
@@ -95,12 +95,13 @@ public class Auther {
     public static boolean checkUpdate() {
         print("Searching for client files...");
         
+        File bin = new File(MZLOptions.RootDir + "bin" + File.separator + "natives");
         client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
         client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
         client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
         client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
         
-        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
+        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists()) || ((!bin.isDirectory()) || (bin.list().length == 0))) {
             print("One or more files not found. \n Starting Update!");
             return false;
         } else {
@@ -136,7 +137,7 @@ public class Auther {
             @Override
             public void run() {
                 print("Sending client data...");
-                String RegResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=reg" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&mail=" + mail + "&opt=" + ru.zetrix.settings.ShieldUtil.MACAddr());
+                String RegResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=reg" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&mail=" + mail + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC());
                 print(RegResult);
                 
                 if (RegResult == null) {

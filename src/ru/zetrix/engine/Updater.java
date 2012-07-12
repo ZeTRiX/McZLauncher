@@ -22,6 +22,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,7 +32,6 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.MZLOptions;
 
@@ -39,7 +40,7 @@ public class Updater extends JFrame {
     public static JPanel UpdPane;
     public static JTextPane OutText;
     public static JProgressBar UpdBar;
-    public static Box UpdBox;
+    public static FileOutputStream fw;
     
     public static JButton CancelUpd = new JButton("Cancel Update", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
     
@@ -58,35 +59,34 @@ public class Updater extends JFrame {
                 super.paintComponent(g);
             }
         };
+        UpdPane.setSize(this.getSize());
         OutText = new JTextPane();
         OutText.setContentType("text/html");
         OutText.setText("<span style=\"font-size: 15pt\">Update Info Will Be Here</span>");
         OutText.setEditable(false);
-        Box upd1 = Box.createHorizontalBox();
-        upd1.add(OutText);
-        Box upd2 = Box.createHorizontalBox();
+        
         UpdBar = new JProgressBar();
         UpdBar.setStringPainted(true);
         UpdBar.setString("Progress Will Apeear Here!");
         UpdBar.setMinimum(0);
         UpdBar.setMaximum(100);
         UpdBar.setValue(0);
-        upd2.add(UpdBar);
-        Box upd3 = Box.createHorizontalBox();
-        upd3.add(CancelUpd);
-        upd3.add(Box.createHorizontalStrut(6));
+        OutText.setSize(new Dimension(440, 40));
         UpdBar.setPreferredSize(OutText.getPreferredSize());
-        UpdBox = Box.createVerticalBox();
-        UpdBox.setBorder(new EmptyBorder(12,12,42,12));
-        UpdBox.add(upd1);
-        UpdBox.add(Box.createVerticalStrut(12));
-        UpdBox.add(upd2);
-        UpdBox.add(Box.createVerticalStrut(12));
-        UpdBox.add(upd3);
-        UpdPane.add("Update", UpdBox);
+        
+        UpdPane.add(OutText);
+        UpdPane.add(UpdBar);
+        UpdPane.add(CancelUpd);
         
         this.getContentPane().add(UpdPane);
         Update();
+        
+        CancelUpd.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+//                Util.SleepTime(500L);
+                setVisible(false);
+            }
+        });
     }
     
     public static void Update() {
@@ -117,7 +117,7 @@ public class Updater extends JFrame {
                     
                     OutText.setText("<span style=\"font-size: 15pt\">Testing paths...</span>");
                     
-                    FileOutputStream fw = new FileOutputStream(client);
+                    fw = new FileOutputStream(client);
                     
                     OutText.setText("<span style=\"font-size: 15pt\">Loading selected files...</span>");
 

@@ -19,6 +19,7 @@
 package ru.zetrix.settings;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -30,7 +31,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
-import java.util.Locale;
 
 public class ShieldUtil {
     public static String ShaHash(String pass) {
@@ -105,6 +105,17 @@ public class ShieldUtil {
 			return(e.getMessage());
 		}
 	}
+    
+    public static long FileSize(String FilePath) {
+        File chfile = new File(FilePath);
+        if(chfile.exists()) {
+            long chflenght = chfile.length();
+            print("Размер " + FilePath + " вычислен: " + chflenght);
+            return chflenght;
+        }
+        print("Размер " + FilePath + " вычислен не был.");
+        return 0;
+    }
     
     private static void print(String str) {
         Debug.Logger(str);

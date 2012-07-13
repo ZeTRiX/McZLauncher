@@ -1,22 +1,4 @@
 <?php
-/*
- * McZLauncher (ZeTRiX's Minecraft Launcher)
- * Copyright (C) 2012 Evgen Yanov <http://www.zetlog.ru>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program (In the "_License" folder). If not, see <http://www.gnu.org/licenses/>.
-*/
-
 define('MZL',true);
 include ("connect.php");
 
@@ -52,12 +34,13 @@ if ($action == 'auth') {
 
 	$hash = $row[$db_password];
 	$checksumm = sha1(file_get_contents("minecraft.jar"));
+	$filesize = filesize("minecraft.jar");
 			
 	$query = mysql_query("UPDATE $db_table SET $db_seckey='$seckey' WHERE $db_username='$login'") or die ("Запрос к базе завершился ошибкой.");
 			
 		if ($hash == $pass) {
 			//echo $hash.'|16030|'.$checksumm.'_'.$login.'|17003|'.rand(999, 9999999);
-			echo $hash.'<>'.$checksumm.'_'.$login.'<>'.rand(99999, 9999999);
+			echo $hash.'<>'.$checksumm.'<>'.$filesize.'<>'.'_'.$login.'<>'.rand(999999, 99999999);
 		} else {
 			echo "Bad Login";
 		}

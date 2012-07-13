@@ -71,7 +71,8 @@ public class Updater extends JFrame {
         UpdBar.setMinimum(0);
         UpdBar.setMaximum(100);
         UpdBar.setValue(0);
-        OutText.setSize(new Dimension(440, 40));
+        OutText.setMinimumSize(new Dimension(440, 40));
+        UpdBar.setMinimumSize(new Dimension(420, 40));
         UpdBar.setPreferredSize(OutText.getPreferredSize());
         
         UpdPane.add(OutText);

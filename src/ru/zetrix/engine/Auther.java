@@ -107,7 +107,7 @@ public class Auther {
         } else {
             print("Client files succesfully detected! \n Checking client hash!");
             print(ShieldUtil.FileHash(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar"));
-            if (hashes[1].equals(ShieldUtil.FileHash(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar"))) {
+            if ((hashes[1].equals(ShieldUtil.FileHash(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar"))) && (Integer.parseInt(hashes[2].toString()) == ShieldUtil.FileSize(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar"))) {
                 return true;
             } else {
                 return false;

@@ -22,15 +22,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import ru.zetrix.settings.Base64;
-//import ru.zetrix.gui.MZLaf;
 import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.MZLOptions;
 import ru.zetrix.settings.Util;
@@ -75,6 +70,7 @@ public class BuildGui extends JFrame {
     String[] memoryset = new String[] {"1024", "2048", "4096", "8192", "16384"};
     private JComboBox memory = new JComboBox(memoryset);
     public static JLabel MemType = new JLabel(" MB");
+    public JCheckBox FullScreen = new JCheckBox("Enable Fullscreen", Util.getPropertyBoolean("fullscreen"));
     
     public JButton updb = new JButton("Update now", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
 
@@ -129,9 +125,12 @@ public class BuildGui extends JFrame {
         Box opt1 = Box.createHorizontalBox();
         opt1.add(MemText);
         opt1.add(Box.createHorizontalStrut(16));
+        memory.setSelectedItem(Util.getPropertyString("memory"));
         opt1.add(memory);
         opt1.add(Box.createHorizontalStrut(16));
         opt1.add(MemType);
+        Box opt2_1 = Box.createHorizontalBox();
+        opt2_1.add(FullScreen);
         Box opt2 = Box.createHorizontalBox();
         opt2.add(Options);
         opt2.add(Box.createHorizontalStrut(6));
@@ -142,6 +141,8 @@ public class BuildGui extends JFrame {
         OptBox = Box.createVerticalBox();
         OptBox.setBorder(new EmptyBorder(12,12,12,12));
         OptBox.add(opt1);
+        OptBox.add(Box.createVerticalStrut(12));
+        OptBox.add(opt2_1);
         OptBox.add(Box.createVerticalStrut(12));
         OptBox.add(opt2);
         tabbedPane.add("Options & Update", OptBox);
@@ -193,7 +194,7 @@ public class BuildGui extends JFrame {
                 Update.show();
 //                Updater.Update();
             }
-        });        
+        });
         openNews.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new ru.zetrix.gui.News().setVisible(true);
@@ -204,10 +205,22 @@ public class BuildGui extends JFrame {
                 new ru.zetrix.gui.Options().setVisible(true);
             }
         });
+        memory.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Util.setProperty("memory", memory.getSelectedItem());
+            }
+        });
         SaveData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (SaveData.isSelected()) {
                     Util.setProperty("password", Base64.encode(new String (BuildGui.Password.getPassword())));
+                }
+            }
+        });
+        FullScreen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (FullScreen.isSelected()) {
+                    Util.setProperty("fullscreen", true);
                 }
             }
         });

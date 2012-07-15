@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.MZLOptions;
+import ru.zetrix.settings.Util;
 
 /**
  *
@@ -91,7 +92,7 @@ public class MCStart extends JFrame {
             setLayout(new BorderLayout());
             add(mcapplet, BorderLayout.CENTER);
             validate();
-            if(MZLOptions.AllowFullscreen) {
+            if(Util.getPropertyBoolean("fullscreen") == true) {
                 setExtendedState(JFrame.MAXIMIZED_BOTH);
             }
             setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));

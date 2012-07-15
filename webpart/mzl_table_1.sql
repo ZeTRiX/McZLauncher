@@ -10,9 +10,10 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `mzl_table_1` (
   `id` int(11) NOT NULL auto_increment,
   `user` text NOT NULL,
+  `mail` text NOT NULL,
   `hash` text NOT NULL,
   `seckey` text NOT NULL,
-  `mail` text NOT NULL,
+  `hostip` text NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 

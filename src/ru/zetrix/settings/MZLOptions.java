@@ -39,7 +39,6 @@ public class MZLOptions {
         "Оффлайн, offline, offline" };
     
     public static boolean AllowAutoenter = true;
-    public static boolean AllowFullscreen = true;
     
     public static String GameFolder = "MZL";
     public static String zip_package = "mclient.zetrix";

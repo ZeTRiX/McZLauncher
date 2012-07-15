@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import ru.zetrix.gui.PreloadImg;
 import ru.zetrix.settings.Debug;
+import ru.zetrix.settings.Util;
 
 public class StartEngine {
-    public static int memory = 1024;    
+    public static int memory = Util.getPropertyInt("memory", 1024);
     public static void main(String[] args) throws Exception {
-
+        print("Memory allocated: " + memory + " MB");
+        
         if (Debug.splashlogo == true) {
         JFrame preload = new JFrame("Loading...");
         com.sun.awt.AWTUtilities.setWindowOpacity(preload, 0.8f);
@@ -40,12 +42,11 @@ public class StartEngine {
         
         float heapSizeMegs = (float)(Runtime.getRuntime().maxMemory() / 1024L / 1024L);
         
+        print("Starting Minecraft ZeTRiX's Launcher");
         if (heapSizeMegs > 511.0F) {
             BuildGui.main(args); 
         } else {
             try {
-                print("Starting Minecraft ZeTRiX's Launcher");
-                //memory = ru.zetrix.settings.Util.getMemorySelection();
                 ArrayList<String> params = new ArrayList<String>();
                 
                 if (ru.zetrix.settings.Util.getPlatform() == ru.zetrix.settings.Util.OS.windows) {

@@ -112,8 +112,7 @@ public class Util {
   public static BufferedImage NullImage() {
       return new BufferedImage(1, 1, 2);
   }
-  
-  
+
   public static void setProperty(String s, Object value)
   {
     if (ConfigFile.checkProperty(s).booleanValue()) ConfigFile.changeProperty(s, value); else

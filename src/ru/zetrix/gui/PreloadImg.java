@@ -26,15 +26,12 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class PreloadImg extends JPanel
-{
+public class PreloadImg extends JPanel {
   private Image bgIm;
 
-  public PreloadImg(String img)
-  {
+  public PreloadImg(String img) {
     setOpaque(true);
-    try
-    {
+    try {
       BufferedImage src = ImageIO.read(PreloadImg.class.getResource("/ru/zetrix/res/" + img));
       int w = src.getWidth();
       int h = src.getHeight();

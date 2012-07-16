@@ -19,6 +19,7 @@
 package ru.zetrix.engine;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +38,7 @@ public class BuildGui extends JFrame {
     public static boolean WrongClient = false;
     public static BuildGui buildgui;
     public static MCStart MineStart;
-    public static Updater Update;
+    private static Updater Update;
     public JButton loginb = new JButton("Login", (new ImageIcon(ru.zetrix.settings.Util.getRes("login.png"))));
     public JButton openNews = new JButton("News", (new ImageIcon(ru.zetrix.settings.Util.getRes("news.png"))));
     public JButton Options = new JButton("More Options", (new ImageIcon(ru.zetrix.settings.Util.getRes("opt.png"))));
@@ -47,13 +48,11 @@ public class BuildGui extends JFrame {
     public static JPasswordField Password = new JPasswordField(20);
     public JCheckBox SaveData = new JCheckBox("Remember me", false);
     
-    public static JTabbedPane tabbedPane;
-    public static Box MainBox;
-    public static Box OptBox;
-    public static Box UpdBox;
-    public static Box RegBox;
-    public static JPanel optpane;
-    public static JPanel updpane;
+    private static JTabbedPane tabbedPane;
+    private static Box MainBox;
+    private static Box OptBox;
+    private static Box RegBox;
+    private static Box AboutBox;
     
     public static JLabel User = new JLabel("Login:");
     public static JTextField Login = new JTextField(20);
@@ -71,8 +70,14 @@ public class BuildGui extends JFrame {
     private JComboBox memory = new JComboBox(memoryset);
     public static JLabel MemType = new JLabel(" MB");
     public JCheckBox FullScreen = new JCheckBox("Enable Fullscreen", Util.getPropertyBoolean("fullscreen"));
-    
     public JButton updb = new JButton("Update now", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
+    
+    public static JLabel About = new JLabel("McZLauncher (ZeTRiX's Minecraft Launcher)");
+    public static JLabel About1 = new JLabel("This program is free software: you can redistribute it and/or modify");
+    public static JLabel About2 = new JLabel("it under the terms of the GNU General Public License as published by");
+    public static JLabel About3 = new JLabel("the Free Software Foundation, either version 3 of the License.");
+    public static JLabel About4 = new JLabel("Licensed under GNU GPL ver.3");
+    public static JLabel About5 = new JLabel("Copyright (C) 2012 ZeTRiX (Evgen Yanov)");
 
     public BuildGui() {
         setTitle(MZLOptions.LauncherTitle);
@@ -176,6 +181,27 @@ public class BuildGui extends JFrame {
         RegBox.add(acpbox);
         tabbedPane.add("Register", RegBox);
         
+        Box ab0 = Box.createHorizontalBox();
+        Box ab1 = Box.createVerticalBox();
+        ab1.add(About);
+        ab1.add(About1);
+        ab1.add(About2);
+        ab1.add(About3);
+        ab0.add(ab1);
+        Box ab2 = Box.createHorizontalBox();
+        ab2.add(About4);
+        ab2.add(Box.createHorizontalStrut(6));
+        Box ab3 = Box.createHorizontalBox();
+        ab3.add(About5);
+        AboutBox = Box.createVerticalBox();
+        AboutBox.setBorder(new EmptyBorder(12,12,12,12));
+        AboutBox.add(ab0);
+        AboutBox.add(Box.createVerticalStrut(8));
+        AboutBox.add(ab2);
+        AboutBox.add(Box.createVerticalStrut(6));
+        AboutBox.add(ab3);
+        tabbedPane.add("About", AboutBox);
+        
         this.getContentPane().add(tabbedPane);
         
         loginb.addActionListener(new LoginListner());
@@ -187,12 +213,8 @@ public class BuildGui extends JFrame {
         updb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updb.setEnabled(false);
-//		UpdBar.setVisible(true);
-//                loginb.setEnabled(false);
-                
                 Update = new Updater();
                 Update.show();
-//                Updater.Update();
             }
         });
         openNews.addActionListener(new ActionListener() {
@@ -234,7 +256,7 @@ public class BuildGui extends JFrame {
                 if (Auther.Authorize(UserName.getText(), new String(Password.getPassword())) == true) {
                 setVisible(false);
                 } else if (WrongClient == true) {
-                    javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
+                    JOptionPane.showMessageDialog((Component)
                             null,
                             "Version of your launcher is not valid. \n Please, visit the server site to get a new one! \n",
                             "Warning",
@@ -242,7 +264,7 @@ public class BuildGui extends JFrame {
                 }
         
             } else if(UserName.getText().length() < 2) {
-                javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
+                JOptionPane.showMessageDialog((Component)
                         null,
                         "You forget to enter a username or it's not valid \n Please, next time, do not forget to enter a valid one. \n",
                         "Warning",
@@ -251,11 +273,12 @@ public class BuildGui extends JFrame {
                 print("Switching to offline mode...");
                 
                 if (Auther.OfflineCheck() == true) {
-                    MineStart = new MCStart(UserName.getText(), "");  
+                    MineStart = new MCStart(UserName.getText(), "12345");
                     setVisible(false);
                 } else {
-                    JOptionPane.showMessageDialog(null,
-                            "One or more game files nor found! \n Can't do anything, case of offline mode. \n You must be in Online mode to download client files.",
+                    JOptionPane.showMessageDialog((Component)
+                            null,
+                            "One or more game files not found! \n Can't do anything, case of offline mode. \n You must be in Online mode to download client files.",
                             "Offline mode Error",
                             JOptionPane.INFORMATION_MESSAGE);
                 }

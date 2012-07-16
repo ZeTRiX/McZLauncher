@@ -19,7 +19,6 @@
 package ru.zetrix.gui;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import javax.swing.ImageIcon;
@@ -33,25 +32,29 @@ import ru.zetrix.settings.MZLOptions;
  * @author ZeTRiX
  */
 public class Options extends JFrame {
-    private JLabel UpdateText = new JLabel("Nothing goes here, yet");
+    private JLabel GPText = new JLabel("Game Path:");
+    private JLabel GamePath = new JLabel(ru.zetrix.settings.Util.getWorkingDirectory().toString());
     public Options() {
         super(MZLOptions.OptName);
         setIconImage(ru.zetrix.settings.Util.getRes("ficon.png"));
         setBackground(Color.BLACK);
-        this.setBounds(300, 300, 260, 140);
-        setResizable(false);
+        this.setBounds(300, 300, 360, 140);
+        setResizable(true);
         
-        Container container = this.getContentPane();
-        container.setLayout(new GridLayout(3,2,2,2));
+        this.getContentPane().setLayout(new GridLayout(3,2,2,2));
         final ImageIcon icon = new ImageIcon(Options.class.getResource("/ru/zetrix/res/bg.png"));
         JPanel mpan = new JPanel() {
             protected void paintComponent(Graphics g) {
                 g.drawImage(icon.getImage(), 0,0, null);
                 super.paintComponent(g);
             }
-        };;
-        mpan.add(UpdateText, "Center");
-        container.add(mpan, "Center");
+        };
+
+        mpan.add(GPText, "West");
+        GamePath.setForeground(Color.BLUE);
+        GamePath.setToolTipText("Path to the game folder, that must contain client files.");
+        mpan.add(GamePath, "East");
+        this.getContentPane().add(mpan, "Center");
     }
 
 }

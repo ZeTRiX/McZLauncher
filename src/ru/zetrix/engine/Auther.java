@@ -18,6 +18,7 @@
 
 package ru.zetrix.engine;
 
+import java.awt.Component;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -36,7 +37,13 @@ public class Auther {
     public static MCStart MineStart;
     public static String[] clientinf;
     public static String[] hashes;
-    public static File[] client = new File[4];
+    public static File[] client = new File[] {
+        new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar"),
+        new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar"),
+        new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar"),
+        new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar"),
+        new File(MZLOptions.RootDir + "bin" + File.separator + "natives")
+    };
     public static Updater Update;
     
     public static boolean Authorize(final String user, final String pass) {
@@ -54,13 +61,11 @@ public class Auther {
                 print(AuthorizeResult);
                 
                 if (AuthorizeResult == null) {
-                    //BuildGui.this.setAuthError("Error connecting to login server", allpanels);
                     return false;
                 }
                 print("Local Host and Address: " + LHost.toString());
                 
                 if (AuthorizeResult.trim().equals("Bad Login")) {
-                    //BuildGui.this.setAuthError("Username or password is incorrect", allpanels);
                     return false;
                 } else if (AuthorizeResult.trim().equals("Fuck Off")) {
                     BuildGui.WrongClient = true;
@@ -73,10 +78,8 @@ public class Auther {
                         
                         print("Auth OK. Starting 'check for download' process...");
                         Util.SleepTime(Long.valueOf(500L));
-                        //BuildGui.runUpdater(md5s, userdata, mods, BuildGui.buildgui);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        //BuildGui.this.AuthError(e.toString(), allpanels);
                     }
                     if (checkUpdate() == true) {
                     MineStart = new MCStart(user, clientinf[1].trim());
@@ -95,14 +98,14 @@ public class Auther {
     public static boolean checkUpdate() {
         print("Searching for client files...");
         
-        File bin = new File(MZLOptions.RootDir + "bin" + File.separator + "natives");
-        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
-        client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
-        client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
-        client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
+//        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
+//        client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
+//        client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
+//        client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
         
-        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists()) || ((!bin.isDirectory()) || (bin.list().length == 0))) {
+        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists()) || ((!client[4].isDirectory()) || (client[4].list().length == 0))) {
             print("One or more files not found. \n Starting Update!");
+            print("Кол-во файлов библиотек: " + client[4].list().length);
             return false;
         } else {
             print("Client files succesfully detected! \n Checking client hash!");
@@ -116,14 +119,14 @@ public class Auther {
     }
     
     public static boolean OfflineCheck() {
-        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
-        client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
-        client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
-        client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
+//        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
+//        client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
+//        client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
+//        client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
 
         print("Searching for client files...");
         if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
-            print("One or more files nor found. \n Nothing can be done in Offline Mode!");
+            print("One or more files not found. \n Nothing can be done in Offline Mode!");
             return false;
         } else {
             print("Client files succesfully detected!");
@@ -144,31 +147,41 @@ public class Auther {
                     print("Error... Null result");
                     return;
                 }
-                
-                if (RegResult.trim().equals("Fail")) {
-                    javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
-                    null,
-                    "You are already have an account \n Please, do not try to register another one. \n",
-                    "Warning - MultiAccount",
-                    JOptionPane.WARNING_MESSAGE);
-                } else if (RegResult.trim().equals("Success")) {
-                    javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
-                    null,
-                    "You have registered a new account! \n Thank you and enjoy the game. \n",
-                    "Ok - Register Complete!",
-                    JOptionPane.INFORMATION_MESSAGE);
-                    try {
-                        print("You have successfully registered...");
-                        Util.SleepTime(Long.valueOf(500L));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog((java.awt.Component)
-                    null,
-                    "Oh, something went wrong! \n Try again later. \n",
-                    "Warning - Error",
-                    JOptionPane.WARNING_MESSAGE);                
+                switch (RegResult.trim()) {
+                    case "Fail1":
+                        JOptionPane.showMessageDialog((Component)
+                        null,
+                        "You are already have an account \n Please, do not try to register another one. \n",
+                        "Warning - MultiAccount",
+                        JOptionPane.WARNING_MESSAGE);
+                        break;
+                    case "Fail2":
+                        JOptionPane.showMessageDialog((Component)
+                        null,
+                        "Username is already in use \n Please, choose another one. \n",
+                        "Warning - Username already exits",
+                        JOptionPane.WARNING_MESSAGE);
+                        break;
+                    case "Success":
+                        JOptionPane.showMessageDialog((Component)
+                        null,
+                        "You have registered a new account! \n Thank you and enjoy the game. \n",
+                        "Ok - Register Complete!",
+                        JOptionPane.INFORMATION_MESSAGE);
+                        try {
+                            print("You have successfully registered...");
+                            Util.SleepTime(Long.valueOf(500L));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog((Component)
+                        null,
+                        "Oops, something went wrong! \n Try again later. \n",
+                        "Warning - Error",
+                        JOptionPane.WARNING_MESSAGE);
+                        break;
                 }
             }
         }

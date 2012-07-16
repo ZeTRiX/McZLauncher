@@ -1,52 +1,55 @@
 <?php
-define('MZL',true);
+define('MZLwp',true);
 include ("connect.php");
 
-$login=$_POST['user'];
-$login = trim($login);
-$login = htmlspecialchars($login);
-$login = mysql_real_escape_string($login);
-$login = stripslashes($login);
-$pass=$_POST['password'];
-//$ver=mysql_real_escape_string(intval($_POST['version']));
-$seckey=mysql_real_escape_string($_POST['opt']);
-$eml=mysql_real_escape_string(trim($_POST['mail']));
+$action		= mysql_real_escape_string($_POST['a']);
+$login		= mysql_real_escape_string(trim(htmlspecialchars(stripslashes($_POST['user']))));
+$pass		= mysql_real_escape_string(trim($_POST['password']));
+$seckey		= mysql_real_escape_string($_POST['opt']);
+$eml		= mysql_real_escape_string(trim($_POST['mail']));
+$usrhost	= mysql_real_escape_string($_POST['localhost']);
+//$ver		= mysql_real_escape_string(intval($_POST['version']));
 
-$action=mysql_real_escape_string($_POST['a']);
-
-if(preg_match('/Minecraft ZeTRiX\'s Launcher/i',$_SERVER['HTTP_USER_AGENT'])) {
+if ((preg_match('/Minecraft ZeTRiX\'s Launcher/i', $_SERVER['HTTP_USER_AGENT'])) && (($login !== null) && ($pass !== null) && ($seckey !== null))) {
 
 if ($action == 'reg') {
 	$mzreg = mysql_query("SELECT COUNT($db_username) FROM $db_table WHERE $db_seckey='$seckey'") or die ("Запрос к базе завершился ошибкой.");
 	$temparr = mysql_fetch_array($mzreg);
 	$mzrow = $temparr[0];
 		if ($mzrow == 0) {
-			mysql_query("INSERT INTO `$db_table` ($db_username, $db_password, $db_seckey, $db_mail) VALUES ('$login', '$pass', '$seckey', '$eml')");
-			echo 'Success';
+			$testusrname = mysql_query("SELECT COUNT($db_id) FROM `$db_table` WHERE $db_username='$login'") or die ("Запрос к базе завершился ошибкой.");
+			$rowusrname = mysql_fetch_array($testusrname);
+			$usrrow = $rowusrname[0];
+			if ($usrrow == 0) {
+				mysql_query("INSERT INTO `$db_table` ($db_username, $db_password, $db_seckey, $db_mail, $db_usrhost) VALUES ('$login', '$pass', '$seckey', '$eml', '$usrhost')");
+				echo 'Success';
+			} else {
+				die ('Fail2');
+			}
 		} else {
-			echo 'Fail';
+			die ('Fail1');
 		}
 }
 
 if ($action == 'auth') {
 	$result = mysql_query("SELECT $db_password FROM `$db_table` WHERE $db_username='$login'") or die ("Запрос к базе завершился ошибкой.");
     $row = mysql_fetch_array($result);
+	$query = mysql_query("UPDATE $db_table SET $db_seckey='$seckey', $db_usrhost='$usrhost' WHERE $db_username='$login'") or die ("Запрос к базе завершился ошибкой.");
 
 	$hash = $row[$db_password];
 	$checksumm = sha1(file_get_contents("minecraft.jar"));
 	$filesize = filesize("minecraft.jar");
-			
-	$query = mysql_query("UPDATE $db_table SET $db_seckey='$seckey' WHERE $db_username='$login'") or die ("Запрос к базе завершился ошибкой.");
-			
+	$session = intval($seckey).rand(9999, 999999);
+
 		if ($hash == $pass) {
 			//echo $hash.'|16030|'.$checksumm.'_'.$login.'|17003|'.rand(999, 9999999);
-			echo $hash.'<>'.$checksumm.'<>'.$filesize.'<>'.'_'.$login.'<>'.rand(999999, 99999999);
+			echo $hash.'<>'.$checksumm.'<>'.$filesize.'<>'.'_'.$login.'<>'.$session;
 		} else {
-			echo "Bad Login";
+			echo 'Bad Login';
 		}
 }
 			
 } else {
-echo "Fuck Off";
+	die ('Fuck Off');
 }
 ?>

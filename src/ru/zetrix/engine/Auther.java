@@ -23,10 +23,7 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
-import ru.zetrix.settings.Debug;
-import ru.zetrix.settings.MZLOptions;
-import ru.zetrix.settings.ShieldUtil;
-import ru.zetrix.settings.Util;
+import ru.zetrix.settings.*;
 
 /**
  *
@@ -69,26 +66,26 @@ public class Auther {
                     return false;
                 } else if (AuthorizeResult.trim().equals("Fuck Off")) {
                     BuildGui.WrongClient = true;
-                    return false;                
+                    return false;
                 } else {
-                    try {
-                        print(AuthorizeResult);
-                        hashes = AuthorizeResult.split("_")[0].split("<>");
-                        clientinf = AuthorizeResult.split("_")[1].split("<>");
-                        
-                        print("Auth OK. Starting 'check for download' process...");
-                        Util.SleepTime(Long.valueOf(500L));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    if (checkUpdate() == true) {
-                    MineStart = new MCStart(user, clientinf[1].trim());
-                    return true;
-                    } else {
-                        Update = new Updater();
-                        Update.show();
-                        return false;
-                    }
+                        try {
+                            print(AuthorizeResult);
+                            hashes = AuthorizeResult.split("_")[0].split("<>");
+                            clientinf = AuthorizeResult.split("_")[1].split("<>");
+                            
+                            print("Auth OK. Starting 'check for download' process...");
+                            Util.SleepTime(Long.valueOf(500L));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (checkUpdate() == true) {
+                            MineStart = new MCStart(user, clientinf[1].trim());
+                            return true;
+                        } else {
+                            Update = new Updater();
+                            Update.show();
+                            return false;
+                        }
                 }
 //            }
 //        }
@@ -97,15 +94,10 @@ public class Auther {
     
     public static boolean checkUpdate() {
         print("Searching for client files...");
+        print("Library files: " + client[4].list().length);
         
-//        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
-//        client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
-//        client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
-//        client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
-        
-        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists()) || ((!client[4].isDirectory()) || (client[4].list().length == 0))) {
+        if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists()) || ((!client[4].isDirectory()) || (client[4].list().length < 8))) {
             print("One or more files not found. \n Starting Update!");
-            print("Кол-во файлов библиотек: " + client[4].list().length);
             return false;
         } else {
             print("Client files succesfully detected! \n Checking client hash!");
@@ -119,11 +111,6 @@ public class Auther {
     }
     
     public static boolean OfflineCheck() {
-//        client[0] = new File(MZLOptions.RootDir + "bin" + File.separator + "minecraft.jar");
-//        client[1] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl.jar");
-//        client[2] = new File(MZLOptions.RootDir + "bin" + File.separator + "jinput.jar");
-//        client[3] = new File(MZLOptions.RootDir + "bin" + File.separator + "lwjgl_util.jar");
-
         print("Searching for client files...");
         if ((!client[0].exists()) || (!client[1].exists()) || (!client[2].exists()) || (!client[3].exists())) {
             print("One or more files not found. \n Nothing can be done in Offline Mode!");

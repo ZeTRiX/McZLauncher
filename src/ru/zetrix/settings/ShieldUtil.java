@@ -33,19 +33,17 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
 public class ShieldUtil {
-    public static String ShaHash(String pass) {
-        String sha1 = "";
+    public static String ShaHash(String Password) {
+        String Sha1Hash = "";
         try {
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
             crypt.reset();
-            crypt.update(pass.getBytes("UTF-8"));
-            sha1 = byteToHex(crypt.digest());
-        } catch(NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }  catch(UnsupportedEncodingException e) {
-            e.printStackTrace();
+            crypt.update(Password.getBytes("UTF-8"));
+            Sha1Hash = byteToHex(crypt.digest());
+        } catch( NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            print("Error: " + e.toString());
         }
-        return sha1;
+        return Sha1Hash;
     }
     
     public static String GetMAC() {
@@ -68,10 +66,8 @@ public class ShieldUtil {
 		print("Current MAC address: " + sb.toString());
 		return sb.toString();
  
-	} catch (UnknownHostException e) {
-		e.printStackTrace();
-	} catch (SocketException e){
-		e.printStackTrace();
+	} catch (UnknownHostException | SocketException e) {
+		print("Error: " + e.toString());
 	}
         return "Fail";
     }
@@ -110,10 +106,10 @@ public class ShieldUtil {
         File chfile = new File(FilePath);
         if(chfile.exists()) {
             long chflenght = chfile.length();
-            print("Размер " + FilePath + " вычислен: " + chflenght);
+            print("Size of " + FilePath + " is: " + chflenght);
             return chflenght;
         }
-        print("Размер " + FilePath + " вычислен не был.");
+        print("Can't get the size of " + FilePath + ".");
         return 0;
     }
     

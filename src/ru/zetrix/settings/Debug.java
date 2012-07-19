@@ -29,7 +29,7 @@ import java.io.IOException;
 public class Debug {
     public static final boolean debug = true; //Debug-режим(Режим отладки) для лаунчера - добавляет соотв. параметр к запуску.
     public static final boolean splashlogo = false; //Иконка перед загрузкой лаунчера. Без пре-лого лаунчер грузится быстрее!
-        
+
     public static void Logger(String text) {
         File WD = new File(Util.getWorkingDirectory().getAbsolutePath() + File.separator + "logs" + '/');
         if (!WD.exists()) {

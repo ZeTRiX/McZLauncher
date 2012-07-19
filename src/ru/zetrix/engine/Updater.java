@@ -43,6 +43,7 @@ public class Updater extends JFrame {
     public static FileOutputStream fw;
     
     public static JButton CancelUpd = new JButton("Cancel Update", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
+    public static JLabel Game = new JLabel("Now close this window and push the login button again!");
     
     public Updater() {
         super(MZLOptions.UpdWinName);
@@ -78,6 +79,8 @@ public class Updater extends JFrame {
         UpdPane.add(OutText);
         UpdPane.add(UpdBar);
         UpdPane.add(CancelUpd);
+        Game.setVisible(false);
+        UpdPane.add(Game);
         
         this.getContentPane().add(UpdPane);
         Update();
@@ -141,6 +144,7 @@ public class Updater extends JFrame {
                     UpdBar.setString("Done!");
                     UpdPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     CancelUpd.setEnabled(false);
+                    Game.setVisible(true);
                 } catch (IOException ex) {
                     OutText.setText("Error: " + ex.toString());
                 }

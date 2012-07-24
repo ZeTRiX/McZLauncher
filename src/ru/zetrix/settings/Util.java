@@ -95,7 +95,9 @@ public class Util {
         public static void SleepTime(Long sll) {
             try {
                 Thread.sleep(sll.longValue());
-            } catch (Exception localException) { }
+            } catch (Exception localException) {
+                print(localException.toString());
+            }
         }
         
         public static BufferedImage getRes(String resname) {

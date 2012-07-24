@@ -48,7 +48,11 @@ if ($action == 'auth') {
 			echo 'Bad Login';
 		}
 }
-			
+
+if (($action == 'addr') && ($seckey !== null)) {
+	echo $masteraddr;
+}
+
 } else {
 	die ('Fuck Off');
 }

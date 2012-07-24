@@ -47,7 +47,7 @@ public class StartEngine {
             BuildGui.main(args); 
         } else {
             try {
-                ArrayList<String> params = new ArrayList<String>();
+                ArrayList<String> params = new ArrayList<>();
                 
                 if (ru.zetrix.settings.Util.getPlatform() == ru.zetrix.settings.Util.OS.windows) {
                     params.add("javaw"); // для Windows
@@ -66,7 +66,8 @@ public class StartEngine {
                 params.add("-classpath");
                 params.add(BuildGui.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
                 params.add("ru.zetrix.engine.BuildGui");
-            
+                
+            print(params.toString());
             ProcessBuilder MZL_Engine = new ProcessBuilder(params);
             Process process = MZL_Engine.start();
             
@@ -74,7 +75,6 @@ public class StartEngine {
             System.exit(0);
         } catch (Exception e) {
             print("Error: " + e);
-            e.printStackTrace();
             BuildGui.main(args);
         }
     }

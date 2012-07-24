@@ -23,7 +23,10 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
-import ru.zetrix.settings.*;
+import ru.zetrix.settings.Debug;
+import ru.zetrix.settings.MZLOptions;
+import ru.zetrix.settings.ShieldUtil;
+import ru.zetrix.settings.Util;
 
 /**
  *
@@ -54,7 +57,7 @@ public class Auther {
 //            public void run() {
                 print("Processing client data...");
                 
-                String AuthorizeResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=auth" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC() + "&localhost=" + LHost.toString());
+                String AuthorizeResult = ru.zetrix.settings.NetUtil.ConnectNet(MZLOptions.AuthScrpt, "a=auth" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC() + "&localhost=" + LHost.toString());
                 print(AuthorizeResult);
                 
                 if (AuthorizeResult == null) {
@@ -127,7 +130,7 @@ public class Auther {
             @Override
             public void run() {
                 print("Sending client data...");
-                String RegResult = ru.zetrix.settings.NetUtil.ConnectNet("http://test.zetlog.ru/launchertest/auth.php", "a=reg" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&mail=" + mail + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC());
+                String RegResult = ru.zetrix.settings.NetUtil.ConnectNet(MZLOptions.AuthScrpt, "a=reg" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&mail=" + mail + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC());
                 print(RegResult);
                 
                 if (RegResult == null) {

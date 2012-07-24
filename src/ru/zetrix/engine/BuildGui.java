@@ -18,11 +18,15 @@
 
 package ru.zetrix.engine;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
@@ -52,6 +56,7 @@ public class BuildGui extends JFrame {
     private static Box MainBox;
     private static Box OptBox;
     private static Box RegBox;
+    private static Box SupBox;
     private static Box AboutBox;
     
     public static JLabel User = new JLabel("Login:");
@@ -72,12 +77,22 @@ public class BuildGui extends JFrame {
     public JCheckBox FullScreen = new JCheckBox("Enable Fullscreen", Util.getPropertyBoolean("fullscreen"));
     public JButton updb = new JButton("Update now", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
     
+    public JButton Send = new JButton("Send", (new ImageIcon(Util.getRes("send.png"))));
+    public static JLabel ClC = new JLabel("Your text:");
+    public static JLabel ClT = new JLabel("Recieved text:");
+    public static JTextField ClNum = new JTextField(20);
+    public static JTextPane Text;
+    public static DataOutputStream out;
+    
     public static JLabel About = new JLabel("McZLauncher (ZeTRiX's Minecraft Launcher)");
     public static JLabel About1 = new JLabel("This program is free software: you can redistribute it and/or modify");
     public static JLabel About2 = new JLabel("it under the terms of the GNU General Public License as published by");
     public static JLabel About3 = new JLabel("the Free Software Foundation, either version 3 of the License.");
     public static JLabel About4 = new JLabel("Licensed under GNU GPL ver.3");
     public static JLabel About5 = new JLabel("Copyright (C) 2012 ZeTRiX (Evgen Yanov)");
+    
+    public static Font BaseFont;
+    public static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     public BuildGui() {
         setTitle(MZLOptions.LauncherTitle);
@@ -86,15 +101,23 @@ public class BuildGui extends JFrame {
         this.setBounds(200, 200, 460, 200);
         setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        
+        try {
+            InputStream is = this.getClass().getResourceAsStream("/ru/zetrix/res/Bevan.ttf");
+            Font NewFont = Font.createFont(Font.TRUETYPE_FONT, is);
+            BaseFont = NewFont.deriveFont(Font.PLAIN, 14);
+        } catch (FontFormatException | IOException ex) {
+            print(ex.toString());
+        }
+        
         final ImageIcon icon = new ImageIcon(BuildGui.class.getResource("/ru/zetrix/res/bg.png"));
         tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT) {
+            @Override
             protected void paintComponent(Graphics g) {
                 g.drawImage(icon.getImage(), 0,0, null);
                 super.paintComponent(g);
             }
         };
-
         Box box1 = Box.createHorizontalBox();
         box1.add(UserText);
         box1.add(Box.createHorizontalStrut(6));
@@ -181,8 +204,35 @@ public class BuildGui extends JFrame {
         RegBox.add(acpbox);
         tabbedPane.add("Register", RegBox);
         
+        
+        Box sup1 = Box.createHorizontalBox();
+        sup1.add(ClC);
+        box1.add(Box.createHorizontalStrut(6));
+        sup1.add(ClNum);
+        Box sup2 = Box.createHorizontalBox();
+        sup2.add(ClT);
+        sup2.add(Box.createHorizontalStrut(6));
+        Text = new JTextPane() {
+            private static final long serialVersionUID = 1L;
+        };
+        Text.setText("Server message will appear here!");
+        Text.setEditable(false);
+        sup2.add(Text);
+        Box sup3 = Box.createHorizontalBox();
+        sup3.add(Send);
+        ClC.setPreferredSize(ClT.getPreferredSize());
+        SupBox = Box.createVerticalBox();
+        SupBox.setBorder(new EmptyBorder(12,12,12,12));
+        SupBox.add(sup1);
+        SupBox.add(Box.createVerticalStrut(8));
+        SupBox.add(sup2);
+        SupBox.add(Box.createVerticalStrut(6));
+        SupBox.add(sup3);
+        tabbedPane.add("Support", SupBox);
+        
         Box ab0 = Box.createHorizontalBox();
         Box ab1 = Box.createVerticalBox();
+        About.setFont(BaseFont);
         ab1.add(About);
         ab1.add(About1);
         ab1.add(About2);
@@ -246,6 +296,7 @@ public class BuildGui extends JFrame {
                 }
             }
         });
+        Send.addActionListener(new SupSend());
     }
     
     class LoginListner implements ActionListener {
@@ -286,24 +337,85 @@ public class BuildGui extends JFrame {
         }
     }
     
-	public static void main(String[] args) {
-                        try {
-//                            UIManager.setLookAndFeel(MZLaf.class.getCanonicalName());
-                            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                                if ("Nimbus".equals(info.getName())) {
-                                    UIManager.setLookAndFeel(info.getClassName());
-                                    break;
-                                }
-                            }
-                        } catch (Exception e) {
-                            print("Error: " + e);
-                        }
-                        buildgui = new BuildGui();
-                        buildgui.show();
-
-	}
-        
-        private static void print(String str) {
-            Debug.Logger(str);
+        class SupSend implements ActionListener {
+            public void actionPerformed(ActionEvent e) {
+                if (ClNum.getText().toString().trim() == null) {
+                    JOptionPane.showMessageDialog((Component)
+                            null,
+                            "No command was typed. \n Please, type a command and try again! \n",
+                            "Warning",
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    try {
+                        out.writeUTF(ClNum.getText().toString());
+                        dlprint(dateFormat.format(Calendar.getInstance().getTime()) + "> Client> " + ClNum.getText().toString());
+                        out.flush();
+                    } catch (IOException ex) {
+                        System.out.println(ex.toString());
+                    }
+                }
+            }
         }
+    
+    public static void McZMSConnect(final String ip) {
+        new Thread() {
+            @Override
+            public void run() {
+                int sPort = 59092;
+                print("Chat server found: " + ip.trim() + ":" + sPort);
+                try {
+                    Socket socket = new Socket(InetAddress.getByName(ip.trim()), sPort);
+                    
+                    InputStream sin = socket.getInputStream();
+                    OutputStream sout = socket.getOutputStream();
+                    
+                    DataInputStream in = new DataInputStream(sin);
+                    out = new DataOutputStream(sout);
+                    while (true) {
+                        String tl = in.readUTF();
+                        Text.setText(tl);
+                        dlprint(dateFormat.format(Calendar.getInstance().getTime()) + "> Server> " + tl);
+                    }
+                } catch (Exception x) {
+                    print(x.toString());
+                }
+            }
+        }
+                .start();
+    }
+    
+    public static void main(String[] args) {
+        try {
+//            UIManager.setLookAndFeel(MZLaf.class.getCanonicalName());
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            print("Error: " + e);
+        }
+        buildgui = new BuildGui();
+        buildgui.show();
+        
+        SupStart();
+    }
+    
+    public static void SupStart() {
+        String SupRes = ru.zetrix.settings.NetUtil.ConnectNet(MZLOptions.AuthScrpt, "a=addr" + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC());
+        if (SupRes == null) {
+            print("No internet connection!");
+        } else {
+            McZMSConnect(SupRes);
+        }
+    }
+    
+    private static void print(String str) {
+        Debug.Logger(str);
+    }
+    
+    private static void dlprint(String str) {
+        Debug.DiagLog(str);
+    }
 }

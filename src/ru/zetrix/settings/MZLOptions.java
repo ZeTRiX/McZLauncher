@@ -29,6 +29,7 @@ public class MZLOptions {
     
     public static String NewsURL = "http://mcupdate.tumblr.com/";
     public static String UpdURL = "http://test.zetlog.ru/launchertest/";
+    public static String AuthScrpt = "http://test.zetlog.ru/launchertest/auth.php";
     
 //    public static final String[] servers = {
 //        "Ensemplix - Sandbox, sv1.ensemplix.ru, 25565", 

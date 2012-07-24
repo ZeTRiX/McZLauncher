@@ -27,7 +27,7 @@ import java.io.IOException;
  * @author ZeTRiX
  */
 public class Debug {
-    public static final boolean debug = true; //Debug-режим(Режим отладки) для лаунчера - добавляет соотв. параметр к запуску.
+    public static final boolean debug = false; //Debug-режим(Режим отладки) для лаунчера - добавляет соотв. параметр к запуску.
     public static final boolean splashlogo = false; //Иконка перед загрузкой лаунчера. Без пре-лого лаунчер грузится быстрее!
 
     public static void Logger(String text) {
@@ -45,6 +45,30 @@ public class Debug {
             } else {
                 try {
                     FileOutputStream fos = new FileOutputStream(Util.getWorkingDirectory().getAbsolutePath() + File.separator + "logs" + File.separator + "MZL_Log.txt", true);
+                    fos.write((text + "\r\n").getBytes());
+                    fos.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    public static void DiagLog(String text) {
+        File WD = new File(Util.getWorkingDirectory().getAbsolutePath() + File.separator + "logs" + '/');
+        if (!WD.exists()) {
+            WD.mkdir();
+        } else {
+            File logfile = new File(Util.getWorkingDirectory().getAbsolutePath() + File.separator + "logs" + File.separator + "MZL_DiagLog.txt");
+            if (!logfile.exists()) {
+                try {
+                    logfile.createNewFile();
+                } catch (IOException exep) {
+                    exep.printStackTrace();
+                }
+            } else {
+                try {
+                    FileOutputStream fos = new FileOutputStream(Util.getWorkingDirectory().getAbsolutePath() + File.separator + "logs" + File.separator + "MZL_DiagLog.txt", true);
                     fos.write((text + "\r\n").getBytes());
                     fos.close();
                 } catch (Exception ex) {

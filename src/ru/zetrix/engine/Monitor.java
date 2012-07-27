@@ -24,5 +24,13 @@ package ru.zetrix.engine;
  * @author ZeTRiX
  */
 public class Monitor {
-    
+    public Monitor() {
+                new Thread() {
+            @Override
+            public void run() {
+                //Something Goes Here. I do not decided on this function, yet.
+            }
+        }
+                .start();
+    }
 }

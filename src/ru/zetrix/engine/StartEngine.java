@@ -25,7 +25,7 @@ import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.Util;
 
 public class StartEngine {
-    public static int memory = Util.getPropertyInt("memory", 1024);
+    private static int memory = Util.getPropertyInt("memory", 1024);
     public static void main(String[] args) throws Exception {
         print("Memory allocated: " + memory + " MB");
         
@@ -50,7 +50,7 @@ public class StartEngine {
                 ArrayList<String> params = new ArrayList<>();
                 
                 if (ru.zetrix.settings.Util.getPlatform() == ru.zetrix.settings.Util.OS.windows) {
-                    params.add("javaw"); // для Windows
+                    params.add("javaw"); // для Windows (Хотя у меня всё нормально работает и при запуске через java, как и на лине)
                 } else {
                     params.add("java"); // для Linux/Mac/остальных
                 }
@@ -68,8 +68,8 @@ public class StartEngine {
                 params.add("ru.zetrix.engine.BuildGui");
                 
             print(params.toString());
-            ProcessBuilder MZL_Engine = new ProcessBuilder(params);
-            Process process = MZL_Engine.start();
+            ProcessBuilder McZEngine = new ProcessBuilder(params);
+            Process process = McZEngine.start();
             
             if (process == null) throw new Exception("!");
             System.exit(0);

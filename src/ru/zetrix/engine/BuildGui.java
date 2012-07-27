@@ -398,7 +398,6 @@ public class BuildGui extends JFrame {
         }
         buildgui = new BuildGui();
         buildgui.show();
-        
         SupStart();
     }
     

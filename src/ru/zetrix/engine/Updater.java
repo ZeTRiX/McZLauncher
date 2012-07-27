@@ -18,10 +18,7 @@
 
 package ru.zetrix.engine;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -34,16 +31,22 @@ import java.util.zip.ZipFile;
 import javax.swing.*;
 import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.MZLOptions;
+import ru.zetrix.settings.Util;
 
 public class Updater extends JFrame {
     public static final boolean debug = true;
-    public static JPanel UpdPane;
-    public static JTextPane OutText;
-    public static JProgressBar UpdBar;
-    public static FileOutputStream fw;
+    private static JPanel UpdPane;
+    private static JTextPane OutText;
+    private static JProgressBar UpdBar;
+    private static FileOutputStream fw;
     
-    public static JButton CancelUpd = new JButton("Cancel Update", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
-    public static JLabel Game = new JLabel("Now close this window and push the login button again!");
+    private static JButton CancelUpd = new JButton("Cancel Update", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
+    private static JLabel Game = new JLabel("Now close this window and push the login button again!");
+    
+    private JPanel ProgressPanel;
+    private JPanel InSideProgressPane;
+    private JPanel ButtonPane;
+    private static Font GameTextFont = new Font("Arial", Font.BOLD, 16);
     
     public Updater() {
         super(MZLOptions.UpdWinName);
@@ -52,15 +55,24 @@ public class Updater extends JFrame {
         this.setBounds(200, 200, 460, 220);
         setResizable(true);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
+        UpdPane = new JPanel();
+        this.getContentPane().add(UpdPane, BorderLayout.NORTH);
+        UpdPane.setPreferredSize(new Dimension(0,40));
         
-        final ImageIcon icon = new ImageIcon(BuildGui.class.getResource("/ru/zetrix/res/bg.png"));
-        UpdPane = new JPanel() {
-            protected void paintComponent(Graphics g) {
-                g.drawImage(icon.getImage(), 0,0, null);
-                super.paintComponent(g);
-            }
-        };
-        UpdPane.setSize(this.getSize());
+        ProgressPanel = new JPanel(new BorderLayout());
+        this.getContentPane().add(ProgressPanel, BorderLayout.CENTER);
+        ProgressPanel.setPreferredSize(new Dimension(0,80));
+        
+        InSideProgressPane = new JPanel(new GridLayout(3,1,0,0));
+        ProgressPanel.add(InSideProgressPane, BorderLayout.CENTER);
+        InSideProgressPane.setPreferredSize(new Dimension(420,0));
+        InSideProgressPane.setOpaque(false);
+        
+        ButtonPane = new JPanel();
+        this.getContentPane().add(ButtonPane, BorderLayout.SOUTH);
+        ButtonPane.setPreferredSize(new Dimension(0,40));
+        
         OutText = new JTextPane();
         OutText.setContentType("text/html");
         OutText.setText("<span style=\"font-size: 15pt\">Update Info Will Be Here</span>");
@@ -73,21 +85,21 @@ public class Updater extends JFrame {
         UpdBar.setMaximum(100);
         UpdBar.setValue(0);
         OutText.setMinimumSize(new Dimension(440, 40));
-        UpdBar.setMinimumSize(new Dimension(420, 40));
+        UpdBar.setMinimumSize(new Dimension(400, 40));
         UpdBar.setPreferredSize(OutText.getPreferredSize());
         
-        UpdPane.add(OutText);
-        UpdPane.add(UpdBar);
-        UpdPane.add(CancelUpd);
+        Game.setFont(GameTextFont);
         Game.setVisible(false);
-        UpdPane.add(Game);
         
-        this.getContentPane().add(UpdPane);
+        UpdPane.add(OutText);
+        InSideProgressPane.add(UpdBar);
+        InSideProgressPane.add(Game);
+        ButtonPane.add(CancelUpd);
         Update();
         
         CancelUpd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-//                Util.SleepTime(500L);
+                Util.SleepTime(500L);
                 setVisible(false);
             }
         });

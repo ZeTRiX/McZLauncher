@@ -30,10 +30,8 @@ import java.util.Calendar;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
-import ru.zetrix.settings.Base64;
-import ru.zetrix.settings.Debug;
-import ru.zetrix.settings.MZLOptions;
-import ru.zetrix.settings.Util;
+import ru.zetrix.gui.ServerStats;
+import ru.zetrix.settings.*;
 
 /**
  * @author ZeTRiX
@@ -57,6 +55,7 @@ public class BuildGui extends JFrame {
     private static Box OptBox;
     private static Box RegBox;
     private static Box SupBox;
+    private static Box MonBox;
     private static Box AboutBox;
     
     public static JLabel User = new JLabel("Login:");
@@ -76,6 +75,10 @@ public class BuildGui extends JFrame {
     public static JLabel MemType = new JLabel(" MB");
     public JCheckBox FullScreen = new JCheckBox("Enable Fullscreen", Util.getPropertyBoolean("fullscreen"));
     public JButton updb = new JButton("Update now", (new ImageIcon(ru.zetrix.settings.Util.getRes("upd.png"))));
+    
+    public static JLabel MonText = new JLabel("Server to Join:");
+    public JComboBox MonitorCB = new JComboBox(MonitorUtils.CreateServerList());
+    public static ServerStats MonitGui = new ServerStats();
     
     public JButton Send = new JButton("Send", (new ImageIcon(Util.getRes("send.png"))));
     public static JLabel ClC = new JLabel("Your text:");
@@ -153,7 +156,7 @@ public class BuildGui extends JFrame {
         Box opt1 = Box.createHorizontalBox();
         opt1.add(MemText);
         opt1.add(Box.createHorizontalStrut(16));
-        memory.setSelectedItem(Util.getPropertyString("memory"));
+        memory.setSelectedItem(Util.getPropertyInt("memory", 1024));
         opt1.add(memory);
         opt1.add(Box.createHorizontalStrut(16));
         opt1.add(MemType);
@@ -230,6 +233,28 @@ public class BuildGui extends JFrame {
         SupBox.add(sup3);
         tabbedPane.add("Support", SupBox);
         
+        Box mon1 = Box.createHorizontalBox();
+        mon1.add(MonText);
+        mon1.add(Box.createHorizontalStrut(8));
+        MonitorCB.setSelectedIndex(Util.getPropertyInt("server", 0));
+        mon1.add(MonitorCB);
+        Box mon2 = Box.createHorizontalBox();
+        mon2.add(new JLabel());
+        mon2.add(Box.createHorizontalStrut(8));
+        mon2.add(MonitGui);
+        Box mon3 = Box.createHorizontalBox();
+        mon3.add(new JLabel());
+        mon3.add(Box.createHorizontalStrut(8));
+        mon3.add(new JLabel());
+        MonBox = Box.createVerticalBox();
+        MonBox.setBorder(new EmptyBorder(12,12,12,12));
+        MonBox.add(mon1);
+        MonBox.add(Box.createVerticalStrut(12));
+        MonBox.add(mon2);
+        MonBox.add(Box.createVerticalStrut(12));
+        MonBox.add(mon3);
+        tabbedPane.add("Servers", MonBox);
+        
         Box ab0 = Box.createHorizontalBox();
         Box ab1 = Box.createVerticalBox();
         About.setFont(BaseFont);
@@ -285,6 +310,7 @@ public class BuildGui extends JFrame {
         SaveData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (SaveData.isSelected()) {
+                    Util.setProperty("login", UserName.getText());
                     Util.setProperty("password", Base64.encode(new String (BuildGui.Password.getPassword())));
                 }
             }
@@ -297,13 +323,18 @@ public class BuildGui extends JFrame {
             }
         });
         Send.addActionListener(new SupSend());
+        MonitorCB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Util.setProperty("server", Integer.valueOf(MonitorCB.getSelectedIndex()));
+                MonitorUtils.pollSelectedServer();
+            }
+        });
     }
     
     class LoginListner implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (mode.getSelectedItem().equals("Online") && (UserName.getText().length() > 1) && (Password.getPassword().length > 1)) {
                 
-                Util.setProperty("login", UserName.getText());
                 if (Auther.Authorize(UserName.getText(), new String(Password.getPassword())) == true) {
                 setVisible(false);
                 } else if (WrongClient == true) {
@@ -356,7 +387,7 @@ public class BuildGui extends JFrame {
                 }
             }
         }
-    
+            
     public static void McZMSConnect(final String ip) {
         new Thread() {
             @Override

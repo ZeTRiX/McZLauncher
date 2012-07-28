@@ -4,7 +4,7 @@
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation:either version 3 of the License:or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program (In the "_License" folder). If not, see <http://www.gnu.org/licenses/>.
+ * along with this program (In the "_License" folder). If not:see <http://www.gnu.org/licenses/>.
 */
 
 package ru.zetrix.settings;
@@ -31,13 +31,14 @@ public class MZLOptions {
     public static String UpdURL = "http://test.zetlog.ru/launchertest/";
     public static String AuthScrpt = "http://test.zetlog.ru/launchertest/auth.php";
     
-//    public static final String[] servers = {
-//        "Ensemplix - Sandbox, sv1.ensemplix.ru, 25565", 
-//        "Ensemplix - HiTech, sv2.ensemplix.ru, 25563", 
-//        "Ensemplix - Cogito, sv2.ensemplix.ru, 25565", 
-//        "Ensemplix - Carnage, sv1.ensemplix.ru, 25563", 
-//        "Ensemplix - Davids, sv1.ensemplix.ru, 25564", 
-//        "Оффлайн, offline, offline" };
+    public static final String[] serverlist = {
+        "No server:nsrv:nsrv",
+        "Ω Омега:ru-craft.net:25565",
+        "Σ Сигма:ru-craft.net:25564",
+        "Δ Дельта:ru-craft.net:25562",
+        "γ Гамма:ru-craft.net:25567",
+        "λ Лямбда:ru-craft.net:25563"
+    };
 //    public static boolean AllowAutoenter = true;
     
     public static String GameFolder = "MZL";

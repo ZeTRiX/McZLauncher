@@ -1,6 +1,7 @@
 <?php
 define('MZLwp',true);
 include ("connect.php");
+include ("status.php");
 
 $action		= mysql_real_escape_string($_POST['a']);
 $login		= mysql_real_escape_string(trim(htmlspecialchars(stripslashes($_POST['user']))));
@@ -9,10 +10,12 @@ $seckey		= mysql_real_escape_string($_POST['opt']);
 $eml		= mysql_real_escape_string(trim($_POST['mail']));
 $usrhost	= mysql_real_escape_string($_POST['localhost']);
 //$ver		= mysql_real_escape_string(intval($_POST['version']));
+$mip		= trim($_POST['ip']);
+$mport		= trim($_POST['port']);
 
-if ((preg_match('/Minecraft ZeTRiX\'s Launcher/i', $_SERVER['HTTP_USER_AGENT'])) && (($login !== null) && ($pass !== null) && ($seckey !== null))) {
+if ((preg_match('/Minecraft ZeTRiX\'s Launcher/i', $_SERVER['HTTP_USER_AGENT']))) {
 
-if ($action == 'reg') {
+if (($action == 'reg') && ($login !== null) && ($pass !== null) && ($seckey !== null)) {
 	$mzreg = mysql_query("SELECT COUNT($db_username) FROM $db_table WHERE $db_seckey='$seckey'") or die ("Запрос к базе завершился ошибкой.");
 	$temparr = mysql_fetch_array($mzreg);
 	$mzrow = $temparr[0];
@@ -31,7 +34,7 @@ if ($action == 'reg') {
 		}
 }
 
-if ($action == 'auth') {
+if (($action == 'auth') && ($login !== null) && ($pass !== null) && ($seckey !== null)) {
 	$result = mysql_query("SELECT $db_password FROM `$db_table` WHERE $db_username='$login'") or die ("Запрос к базе завершился ошибкой.");
     $row = mysql_fetch_array($result);
 	$query = mysql_query("UPDATE $db_table SET $db_seckey='$seckey', $db_usrhost='$usrhost' WHERE $db_username='$login'") or die ("Запрос к базе завершился ошибкой.");
@@ -51,6 +54,14 @@ if ($action == 'auth') {
 
 if (($action == 'addr') && ($seckey !== null)) {
 	echo $masteraddr;
+}
+
+if (($action == 'monitor') && ($mip !== null)) {
+	$Server = new status($mip, $mport);
+	$players = $Server->CurPlayers.':'.$Server->MaxPlayers;
+	$offtext = 'OFFLINE';
+	$result = $Server->Online ? $players : $offtext;
+	echo $result;
 }
 
 } else {

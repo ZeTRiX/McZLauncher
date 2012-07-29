@@ -30,6 +30,7 @@ public class MZLOptions {
     public static String NewsURL = "http://mcupdate.tumblr.com/";
     public static String UpdURL = "http://test.zetlog.ru/launchertest/";
     public static String AuthScrpt = "http://test.zetlog.ru/launchertest/auth.php";
+    public static String ZipURL = "http://test.zetlog.ru/launchertest/mczipper.php";
     
     public static final String[] serverlist = {
         "No server:nsrv:nsrv",
@@ -42,7 +43,7 @@ public class MZLOptions {
 //    public static boolean AllowAutoenter = true;
     
     public static String GameFolder = "MZL";
-    public static String zip_package = "mclient.zetrix";
+    public static String zip_package = "mclient.zip";
     public static String RootDir = ru.zetrix.settings.Util.getWorkingDirectory().getAbsolutePath() + File.separator;
     
     public static String key = "E98F109E-C030-4D0D-B4D3-1F6652BE5E51";

@@ -63,23 +63,22 @@ public class Auther {
                 if (AuthorizeResult == null) {
                     return false;
                 }
-                print("Local Host and Address: " + LHost.toString());
                 
-                if (AuthorizeResult.trim().equals("Bad Login")) {
-                    return false;
-                } else if (AuthorizeResult.trim().equals("Fuck Off")) {
-                    BuildGui.WrongClient = true;
-                    return false;
-                } else {
+                switch (AuthorizeResult.trim()) {
+                    case "Bad Login":
+                        return false;
+                    case "Fuck Off":
+                        BuildGui.WrongClient = true;
+                        return false;
+                    default:
                         try {
-                            print(AuthorizeResult);
                             hashes = AuthorizeResult.split("_")[0].split("<>");
                             clientinf = AuthorizeResult.split("_")[1].split("<>");
                             
                             print("Auth OK. Starting 'check for download' process...");
                             Util.SleepTime(Long.valueOf(500L));
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            print(e.toString());
                         }
                         if (checkUpdate() == true) {
                             MineStart = new MCStart(user, clientinf[1].trim());
@@ -90,9 +89,6 @@ public class Auther {
                             return false;
                         }
                 }
-//            }
-//        }
-//                .start();
     }
     
     public static boolean checkUpdate() {

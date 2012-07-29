@@ -319,6 +319,8 @@ public class BuildGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (FullScreen.isSelected()) {
                     Util.setProperty("fullscreen", true);
+                } else {
+                    Util.setProperty("fullscreen", false);
                 }
             }
         });

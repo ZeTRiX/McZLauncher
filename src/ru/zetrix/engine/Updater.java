@@ -31,6 +31,7 @@ import java.util.zip.ZipFile;
 import javax.swing.*;
 import ru.zetrix.settings.Debug;
 import ru.zetrix.settings.MZLOptions;
+import ru.zetrix.settings.ShieldUtil;
 import ru.zetrix.settings.Util;
 
 public class Updater extends JFrame {
@@ -113,50 +114,52 @@ public class Updater extends JFrame {
                     //BuildGui.tabbedPane.remove(1);
                     UpdPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     OutText.setText("<span style=\"font-size: 15pt\">Connecting to Download Server...</span>");
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException exeption) {
-                        OutText.setText(exeption.toString());
+                    
+                    
+                    String ZipEx = ru.zetrix.settings.NetUtil.ConnectNet(MZLOptions.ZipURL, "mczip=" + MZLOptions.zip_package);
+                    if (ZipEx.trim() == null) {
+                        OutText.setText("<span style=\"font-size: 15pt\">Error zipping files...</span>");
+                    } else if (ZipEx.trim().equals("Fuck Off")) {
+                        BuildGui.WrongClient = true;
+                        OutText.setText("<span style=\"font-size: 15pt\">Launcher version check failed...</span>");
+                    } else if (ZipEx.trim().equals("Success")) {
+                        URL url = new URL(MZLOptions.UpdURL + MZLOptions.zip_package);
+                        OutText.setText("<span style=\"font-size: 15pt\">Recieving a list of files...</span>");
+                        
+                        HttpURLConnection updconn = (HttpURLConnection) url.openConnection();
+                        File client = new File(MZLOptions.RootDir, MZLOptions.zip_package);
+                        long cll_web = updconn.getContentLength();
+                        
+                        UpdBar.setMaximum((int) cll_web);
+                        if (client.length() != cll_web && cll_web > 1) {}
+                        
+                        BufferedInputStream bis = new BufferedInputStream(updconn.getInputStream());
+                        OutText.setText("<span style=\"font-size: 15pt\">Testing paths...</span>");
+                        
+                        fw = new FileOutputStream(client);
+                        OutText.setText("<span style=\"font-size: 15pt\">Loading selected files...</span>");
+
+                        byte[] b = new byte[1024];
+                        int count = 0;
+                        
+                        OutText.setText("<span style=\"font-size: 15pt\">Saving client files to disc...</span>");
+                        while ((count=bis.read(b)) != -1) {
+                            fw.write(b,0,count);
+                            UpdBar.setValue((int) client.length());
+                            UpdBar.setString("Saving " + MZLOptions.zip_package + " ("
+                                    + (int) client.length() + " bytes of " + cll_web
+                                    + " bytes)");
+                        }
+                        fw.close();
+                        
+                        OutText.setText("<span style=\"font-size: 15pt\">Unpacking client...</span>");
+                        unzip();
+                        OutText.setText("<span style=\"font-size: 15pt\">All Done! Have a nice day!</span>");
+                        UpdBar.setString("Done!");
+                        UpdPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                        CancelUpd.setEnabled(false);
+                        Game.setVisible(true);
                     }
-                    
-                    URL url = new URL(MZLOptions.UpdURL + MZLOptions.zip_package);
-                    OutText.setText("<span style=\"font-size: 15pt\">Recieving a list of files...</span>");
-          
-                    HttpURLConnection updconn = (HttpURLConnection) url.openConnection();
-                    File client = new File(MZLOptions.RootDir, MZLOptions.zip_package);
-                    long cll_web = updconn.getContentLength();
-                    
-                    UpdBar.setMaximum((int) cll_web);
-                    if (client.length() != cll_web && cll_web > 1) {}
-                    
-                    BufferedInputStream bis = new BufferedInputStream(updconn.getInputStream());
-                    
-                    OutText.setText("<span style=\"font-size: 15pt\">Testing paths...</span>");
-                    
-                    fw = new FileOutputStream(client);
-                    
-                    OutText.setText("<span style=\"font-size: 15pt\">Loading selected files...</span>");
-
-                    byte[] b = new byte[1024];
-                    int count = 0;
-
-                    OutText.setText("<span style=\"font-size: 15pt\">Saving client files to disc...</span>");
-                    while ((count=bis.read(b)) != -1) {
-                        fw.write(b,0,count);
-                        UpdBar.setValue((int) client.length());
-					UpdBar.setString("Saving " + MZLOptions.zip_package + " ("
-							+ (int) client.length() + " bytes of " + cll_web
-							+ " bytes)");
-                    }
-                    fw.close();
-
-                    OutText.setText("<span style=\"font-size: 15pt\">Unpacking client...</span>");
-                    unzip();
-                    OutText.setText("<span style=\"font-size: 15pt\">All Done! Have a nice day!</span>");
-                    UpdBar.setString("Done!");
-                    UpdPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    CancelUpd.setEnabled(false);
-                    Game.setVisible(true);
                 } catch (IOException ex) {
                     OutText.setText("Error: " + ex.toString());
                 }

@@ -40,8 +40,8 @@ if (($action == 'auth') && ($login !== null) && ($pass !== null) && ($seckey !==
 	$query = mysql_query("UPDATE $db_table SET $db_seckey='$seckey', $db_usrhost='$usrhost' WHERE $db_username='$login'") or die ("Запрос к базе завершился ошибкой.");
 
 	$hash = $row[$db_password];
-	$checksumm = sha1(file_get_contents("minecraft.jar"));
-	$filesize = filesize("minecraft.jar");
+	$checksumm = sha1(file_get_contents($mczipper."/bin/minecraft.jar"));
+	$filesize = filesize($mczipper."/bin/minecraft.jar");
 	$session = intval($seckey).rand(9999, 999999);
 
 		if ($hash == $pass) {

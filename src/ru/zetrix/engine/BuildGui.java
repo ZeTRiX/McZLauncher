@@ -282,7 +282,7 @@ public class BuildGui extends JFrame {
         loginb.addActionListener(new LoginListner());
         regb.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Auther.Register(Login.getText(), Passwd.getPassword(), MailF.getText());
+                Auther.Register(Login.getText(), new String(Passwd.getPassword()), MailF.getText());
             }
         });
         updb.addActionListener(new ActionListener() {

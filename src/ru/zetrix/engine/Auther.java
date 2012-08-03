@@ -57,7 +57,7 @@ public class Auther {
 //            public void run() {
                 print("Processing client data...");
                 
-                String AuthorizeResult = ru.zetrix.settings.NetUtil.ConnectNet(MZLOptions.AuthScrpt, "a=auth" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC() + "&localhost=" + LHost.toString());
+                String AuthorizeResult = ru.zetrix.settings.NetUtil.ConnectNet(MZLOptions.AuthScrpt, "a=auth" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user.toLowerCase() + pass) + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC() + "&localhost=" + LHost.toString());
                 print(AuthorizeResult);
                 
                 if (AuthorizeResult == null) {
@@ -121,12 +121,12 @@ public class Auther {
         }
     }
     
-    public static void Register(final String user, final char[] pass, final String mail) {
+    public static void Register(final String user, final String pass, final String mail) {
         new Thread() {
             @Override
             public void run() {
                 print("Sending client data...");
-                String RegResult = ru.zetrix.settings.NetUtil.ConnectNet(MZLOptions.AuthScrpt, "a=reg" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user + pass) + "&mail=" + mail + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC());
+                String RegResult = ru.zetrix.settings.NetUtil.ConnectNet(MZLOptions.AuthScrpt, "a=reg" + "&user=" + user + "&password=" + ShieldUtil.ShaHash(user.toLowerCase() + pass) + "&mail=" + mail + "&opt=" + ru.zetrix.settings.ShieldUtil.GetMAC());
                 print(RegResult);
                 
                 if (RegResult == null) {

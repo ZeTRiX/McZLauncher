@@ -42,6 +42,7 @@ public class MZLOptions {
     };
 //    public static boolean AllowAutoenter = true;
     
+    public static String SecureVersion = "Minecraft ZeTRiX's Launcher";
     public static String GameFolder = "MZL";
     public static String zip_package = "mclient.zip";
     public static String RootDir = ru.zetrix.settings.Util.getWorkingDirectory().getAbsolutePath() + File.separator;

@@ -13,7 +13,7 @@ $usrhost	= mysql_real_escape_string($_POST['localhost']);
 $mip		= trim($_POST['ip']);
 $mport		= trim($_POST['port']);
 
-if ((preg_match('/Minecraft ZeTRiX\'s Launcher/i', $_SERVER['HTTP_USER_AGENT']))) {
+if ((preg_match('/'.$secversion.'/i', $_SERVER['HTTP_USER_AGENT']))) {
 
 if (($action == 'reg') && ($login !== null) && ($pass !== null) && ($seckey !== null)) {
 	$mzreg = mysql_query("SELECT COUNT($db_username) FROM $db_table WHERE $db_seckey='$seckey'") or die ("Запрос к базе завершился ошибкой.");

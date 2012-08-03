@@ -17,6 +17,7 @@ $db_usrhost = 'hostip';
 
 $masteraddr = '127.0.0.1'; //MasterServer IP address
 $mczipper = 'mczipper';
+$secversion = 'Minecraft ZeTRiX\'s Launcher';
 
 $link = @mysql_connect($db_host.':'.$db_port,$db_user,$db_pass) or die('Невозможно установить соединение с базой данных!');
 

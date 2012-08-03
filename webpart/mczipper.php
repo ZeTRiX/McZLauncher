@@ -3,7 +3,7 @@ define('MZLwp',true);
 include ("connect.php");
 $mczip = trim($_POST['mczip']);
 
-if ((preg_match('/Minecraft ZeTRiX\'s Launcher/i', $_SERVER['HTTP_USER_AGENT']))) {
+if ((preg_match('/'.$secversion.'/i', $_SERVER['HTTP_USER_AGENT']))) {
 unlink($mczip);
 $zip = new ZipArchive();
 $zip->open($mczip, ZipArchive::CREATE);
